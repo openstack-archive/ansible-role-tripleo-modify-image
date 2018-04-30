@@ -2,19 +2,13 @@
 # Mandatory fully qualified reference to the source image to be modified
 source_image:
 
-# Mandatory path to the directory containing the Dockerfile to modify the image
-modify_dir_path:
-
 # String to be appended after the tag to indicate this is a modified version of
-# the source image.
-modified_append_tag: "-modified-{{lookup('pipe','date +%Y%m%d%H%M%S')}}"
+# the source image. Defaults to the output of the command
+# "date +-modified-%Y%m%d%H%M%S"
+modified_append_tag:
 
 # If set, the modified image will be tagged with this reference. If the purpose
 # of the image is not changing, it may be enough to rely on modified_append_tag
 # to identify that this is a modified version of the source image.
 # modified_append_tag will still be appended to this reference.
-modified_image:
-
-# Build-time variables for the image build. The role variables source_image and
-# modified_append_tag will be merged with this dict.
-modify_buildargs: {}
+modified_image: {{ source_image }}

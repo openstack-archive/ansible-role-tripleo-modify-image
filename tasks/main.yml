@@ -1,1 +1,21 @@
----
+- name: Set default modified_append_tag
+  set_fact:
+    modified_append_tag: "{{ lookup('pipe','date +-modified-%Y%m%d%H%M%S') }}"
+  when: modified_append_tag is undefined or modified_append_tag == None
+
+- name: Create image build context directory
+  tempfile:
+    state: directory
+    prefix: tripleo-modify-image
+  register: context_dir
+
+- name: Write Dockerfile to {{ context_dir.path }}
+  template:
+    src: Dockerfile.j2
+    dest: "{{ context_dir.path }}/Dockerfile"
+
+- name: Modify image  
+  docker_image:
+    name: "{{ modified_image }}{{ modified_append_tag }}"
+    path: "{{ context_dir.path }}"
+
