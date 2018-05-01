@@ -1,21 +1,28 @@
+- name: Copy Dockerfile to Dockerfile.modified
+  copy:
+    src: "{{ modify_dir_path }}/Dockerfile"
+    dest: "{{ modify_dir_path }}/Dockerfile.modified"
+
 - name: Set default modified_append_tag
   set_fact:
     modified_append_tag: "{{ lookup('pipe','date +-modified-%Y%m%d%H%M%S') }}"
   when: modified_append_tag is undefined or modified_append_tag == None
 
-- name: Create image build context directory
-  tempfile:
-    state: directory
-    prefix: tripleo-modify-image
-  register: context_dir
+- name: Replace FROM directive
+  lineinfile:
+    path: "{{ modify_dir_path }}/Dockerfile.modified"
+    regexp: "^FROM "
+    line: "FROM {{ source_image }}"
 
-- name: Write Dockerfile to {{ context_dir.path }}
-  template:
-    src: Dockerfile.j2
-    dest: "{{ context_dir.path }}/Dockerfile"
+- name: Add LABEL modified_append_tag={{ modified_append_tag }}
+  lineinfile:
+    path: "{{ modify_dir_path }}/Dockerfile.modified"
+    insertafter: "^FROM "
+    line: "LABEL modified_append_tag={{ modified_append_tag }}"
 
 - name: Modify image  
   docker_image:
     name: "{{ modified_image }}{{ modified_append_tag }}"
-    path: "{{ context_dir.path }}"
+    path: "{{ modify_dir_path }}"
+    dockerfile: Dockerfile.modified
 
