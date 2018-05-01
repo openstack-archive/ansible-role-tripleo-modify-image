@@ -35,6 +35,7 @@ The following playbook will produce a modified image tagged with
       - name: include tripleo-modify-image
         import_role:
           name: tripleo-modify-image
+          tasks_from: modify_image.yml
         vars:
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
           modify_dir_path: /path/to/example_modify_dir
