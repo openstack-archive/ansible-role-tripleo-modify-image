@@ -8,19 +8,10 @@ A role to allow modification to container images built for the TripleO project.
 
 | Name              | Default Value       | Description          |
 |-------------------|---------------------|----------------------|
-| `source_image` | `None` | Mandatory fully qualified reference to the source
-image to be modified. The supplied Dockerfile will be copied and modified to
-make the FROM directive match this variable. |
-| `modify_dir_path` | `None` | Mandatory path to the directory containing the
-Dockerfile to modify the image |
-| `modified_append_tag` | `None` | String to be appended after the tag to
-indicate this is a modified version of the source image. Defaults to the output
-of the command `date +-modified-%Y%m%d%H%M%S` |
-| `modified_image` | `{{source_image}}` | If set, the modified image will be
-tagged with this reference. If the purpose of the image is not changing, it may
-be enough to rely on `modified_append_tag` to identify that this is a modified
-version of the source image. `modified_append_tag` will still be appended to
-this reference. |
+| `source_image` | `None` | Mandatory fully qualified reference to the source image to be modified. The supplied Dockerfile will be copied and modified to make the FROM directive match this variable. |
+| `modify_dir_path` | `None` | Mandatory path to the directory containing the Dockerfile to modify the image |
+| `modified_append_tag` | `None` | String to be appended after the tag to indicate this is a modified version of the source image. Defaults to the output of the command `date +-modified-%Y%m%d%H%M%S` |
+| `modified_image` | `{{source_image}}` | If set, the modified image will be tagged with this reference. If the purpose of the image is not changing, it may be enough to rely on `modified_append_tag` to identify that this is a modified version of the source image. `modified_append_tag` will still be appended to this reference. |
 
 
 ## Requirements ##
