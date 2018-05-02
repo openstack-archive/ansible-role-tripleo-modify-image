@@ -1,5 +1,1 @@
-# Modify image
-source_image:
-modify_dir_path:
-modified_append_tag:
-modified_image: "{{ source_image }}"
+---

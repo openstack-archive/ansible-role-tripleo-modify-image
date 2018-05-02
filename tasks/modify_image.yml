@@ -1,12 +1,12 @@
+- name: Set default facts
+  include_role:
+    name: tripleo-modify-image
+    tasks_from: set_defaults.yml
+
 - name: Copy Dockerfile to Dockerfile.modified
   copy:
     src: "{{ modify_dir_path }}/Dockerfile"
     dest: "{{ modify_dir_path }}/Dockerfile.modified"
-
-- name: Set default modified_append_tag
-  set_fact:
-    modified_append_tag: "{{ lookup('pipe','date +-modified-%Y%m%d%H%M%S') }}"
-  when: modified_append_tag is undefined or modified_append_tag == None
 
 - name: Replace FROM directive
   lineinfile:

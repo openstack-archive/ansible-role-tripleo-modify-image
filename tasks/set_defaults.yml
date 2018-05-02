@@ -1,0 +1,9 @@
+- name: Set default modified_append_tag
+  set_fact:
+    modified_append_tag: "{{ lookup('pipe','date +-modified-%Y%m%d%H%M%S') }}"
+  when: modified_append_tag is undefined
+
+- name: Set default modified_image
+  set_fact:
+    modified_image: "{{source_image}}"
+  when: modified_image is undefined

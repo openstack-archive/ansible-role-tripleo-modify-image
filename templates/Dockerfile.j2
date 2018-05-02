@@ -1,2 +1,20 @@
 FROM {{ source_image }}
 LABEL modified_append_tag={{ modified_append_tag }}
+
+USER root
+
+COPY yum_update.sh /tmp/
+COPY compare-package-json.py /tmp/
+
+{% if yum_repos_dir_path is defined %}
+COPY yum.repos.d /etc/
+{% endif %}
+
+{% if compare_host_packages is defined %}
+COPY host_packages.json /tmp/
+{% endif %}
+
+RUN /tmp/yum_update.sh
+
+USER {{ original_user }}
+

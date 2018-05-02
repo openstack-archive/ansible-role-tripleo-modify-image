@@ -1,0 +1,62 @@
+- name: Set default facts
+  include_role:
+    name: tripleo-modify-image
+    tasks_from: set_defaults.yml
+
+- name: Inspect image
+  docker_image_facts:
+    name: "{{ source_image }}"
+  register: source_image_facts
+
+- name: Set original_user
+  set_fact:
+    original_user: "{{ source_image_facts.images[0].Config.User }}"
+
+- name: Create image build context directory
+  tempfile:
+    state: directory
+    prefix: tripleo-modify-image
+  register: context_dir
+
+- name: Copy directory used for /etc/yum.repos.d
+  copy:
+    src: "{{ yum_repos_dir_path }}"
+    dest: "{{ context_dir.path }}/yum.repos.d"
+  when: yum_repos_dir_path is defined
+
+- name: Generate host package json file
+  block:
+
+  - command: |
+      rpm -qa --qf '"%{NAME}": "%{VERSION}-%{RELEASE}"\n'
+    register: rpm_query_output
+
+  - copy:
+      content: "{{ rpm_query_output.stdout | from_yaml | to_nice_json }}"
+      dest: "{{ context_dir.path }}/host_packages.json"
+    
+  when: compare_host_packages is defined and compare_host_packages
+
+- name: Write Dockerfile to {{ context_dir.path }}
+  template:
+    src: Dockerfile.j2
+    dest: "{{ context_dir.path }}/Dockerfile"
+
+- name: Write yum_update.sh
+  copy:
+    src: yum_update.sh
+    dest: "{{ context_dir.path }}/yum_update.sh"
+    mode: 0555
+
+- name: Write compare-package-json.py
+  copy:
+    src: compare-package-json.py
+    dest: "{{ context_dir.path }}/compare-package-json.py"
+    mode: 0555
+
+- name: Modify image
+  include_role:
+    name: tripleo-modify-image
+    tasks_from: modify_image.yml
+  vars:
+    modify_dir_path: "{{ context_dir.path }}"
