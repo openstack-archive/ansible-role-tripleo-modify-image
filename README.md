@@ -73,15 +73,16 @@ the modification, for example:
 The following playbook will produce a modified image with the tag
 `:latest-updated` which will do a yum update using the host's /etc/yum.repos.d.
 The yum update will only occur if there are differences between host and image
-package versions.
+package versions. In this playbook the tasks_from is set as a variable instead
+of an `import_role` parameter.
 
     - hosts: localhost
       tasks:
       - name: include tripleo-modify-image
         import_role:
           name: tripleo-modify-image
-          tasks_from: yum_update.yml
         vars:
+          tasks_from: yum_update.yml
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
           compare_host_packages: true
           yum_repos_dir_path: /etc/yum.repos.d
