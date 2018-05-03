@@ -10,7 +10,7 @@ COPY compare-package-json.py /tmp/
 COPY yum.repos.d /etc/
 {% endif %}
 
-{% if compare_host_packages is defined %}
+{% if compare_host_packages %}
 COPY host_packages.json /tmp/
 {% endif %}
 

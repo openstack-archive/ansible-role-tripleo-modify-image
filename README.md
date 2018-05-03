@@ -8,20 +8,20 @@ A role to allow modification to container images built for the TripleO project.
 
 | Name              | Default Value       | Description          |
 |-------------------|---------------------|----------------------|
-| `source_image` | `None` | Mandatory fully qualified reference to the source image to be modified. The supplied Dockerfile will be copied and modified to make the FROM directive match this variable. |
-| `modify_dir_path` | `None` | Mandatory path to the directory containing the Dockerfile to modify the image |
-| `modified_append_tag` | `None` | String to be appended after the tag to indicate this is a modified version of the source image. Defaults to the output of the command `date +-modified-%Y%m%d%H%M%S` |
-| `modified_image` | `{{source_image}}` | If set, the modified image will be tagged with this reference. If the purpose of the image is not changing, it may be enough to rely on `modified_append_tag` to identify that this is a modified version of the source image. `modified_append_tag` will still be appended to this reference. |
+| `source_image` | `[undefined]` | Mandatory fully qualified reference to the source image to be modified. The supplied Dockerfile will be copied and modified to make the FROM directive match this variable. |
+| `modify_dir_path` | `[undefined]` | Mandatory path to the directory containing the Dockerfile to modify the image |
+| `modified_append_tag` | `date +-modified-%Y%m%d%H%M%S` | String to be appended after the tag to indicate this is a modified version of the source image. |
+| `modified_image_prefix` | `''` | If set, the modified image will be tagged with this reference. If the purpose of the image is not changing, it may be enough to rely on `modified_append_tag` to identify that this is a modified version of the source image. `modified_append_tag` will still be appended to this reference. |
 
 **Variables used for yum update**
 
 | Name              | Default Value       | Description          |
 |-------------------|---------------------|----------------------|
-| `source_image` | `None` | See modify image variables |
-| `modified_append_tag` | `None` | See modify image variables |
-| `modified_image` | `{{source_image}}` | See modify image variables |
+| `source_image` | `[undefined]` | See modify image variables |
+| `modified_append_tag` | `date +-modified-%Y%m%d%H%M%S` | See modify image variables |
+| `modified_image_prefix` | `''` | See modify image variables |
 | `yum_repos_dir_path` | `None` | Optional path of directory to be used as `/etc/yum.repos.d` during the update |
-| `compare_host_packages` | False | If True, skip yum update when package versions match host package versions |
+| `compare_host_packages` | `False` | If `True`, skip yum update when package versions match host package versions |
 
 ## Requirements ##
 

@@ -1,0 +1,11 @@
+- name: Ensure that source_image is defined
+  assert:
+    that:
+      - source_image is defined
+      - source_image | length > 0
+
+- name: Ensure that modify_dir_path is defined
+  assert:
+    that:
+      - modify_dir_path is defined
+      - modify_dir_path | length > 0

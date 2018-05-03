@@ -1,0 +1,3 @@
+modified_image_prefix: ''
+modified_append_tag: "{{ lookup('pipe','date +-modified-%Y%m%d%H%M%S') }}"
+compare_host_packages: no
