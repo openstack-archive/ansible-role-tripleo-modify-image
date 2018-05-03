@@ -1,9 +1,3 @@
-- name: Set default tasks_from
-  set_fact:
-    tasks_from: modify_image.yaml
-  when: tasks_from is undefined
-
-- name: Running tasks from {{ tasks_from }}
-  include_role:
-    name: tripleo-modify-image
-    tasks_from: "{{ tasks_from }}"
+- import_tasks: precheck.yml
+  tags:
+    - always

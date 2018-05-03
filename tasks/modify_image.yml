@@ -1,7 +1,6 @@
-- name: Set default facts
-  include_role:
-    name: tripleo-modify-image
-    tasks_from: set_defaults.yml
+- import_tasks: precheck.yml
+  tags:
+    - always
 
 - name: Copy Dockerfile to Dockerfile.modified
   copy:
@@ -20,9 +19,9 @@
     insertafter: "^FROM "
     line: "LABEL modified_append_tag={{ modified_append_tag }}"
 
-- name: Modify image  
+- name: Modify image
   docker_image:
-    name: "{{ modified_image }}{{ modified_append_tag }}"
+    name: "{{ modified_image_prefix }}{{ modified_append_tag }}"
     path: "{{ modify_dir_path }}"
     dockerfile: Dockerfile.modified
 
