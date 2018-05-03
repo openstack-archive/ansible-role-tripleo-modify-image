@@ -2,6 +2,11 @@
   tags:
     - always
 
+- name: Set default modified_append_tag
+  set_fact:
+    modified_append_tag: "{{ lookup('pipe','date +-modified-%Y%m%d%H%M%S') }}"
+  when: modified_append_tag is undefined
+
 - name: Copy Dockerfile to Dockerfile.modified
   copy:
     src: "{{ modify_dir_path }}/Dockerfile"
@@ -21,7 +26,7 @@
 
 - name: Modify image
   docker_image:
-    name: "{{ modified_image_prefix }}{{ modified_append_tag }}"
+    name: "{{ target_image | default(source_image) }}{{ modified_append_tag }}"
     path: "{{ modify_dir_path }}"
     dockerfile: Dockerfile.modified
 

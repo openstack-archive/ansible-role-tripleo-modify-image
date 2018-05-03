@@ -1,3 +1,5 @@
 - import_tasks: precheck.yml
   tags:
     - always
+
+- import_tasks: "{{ tasks_from | default('modify_image.yml') }}"

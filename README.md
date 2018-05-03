@@ -11,7 +11,8 @@ A role to allow modification to container images built for the TripleO project.
 | `source_image` | `[undefined]` | Mandatory fully qualified reference to the source image to be modified. The supplied Dockerfile will be copied and modified to make the FROM directive match this variable. |
 | `modify_dir_path` | `[undefined]` | Mandatory path to the directory containing the Dockerfile to modify the image |
 | `modified_append_tag` | `date +-modified-%Y%m%d%H%M%S` | String to be appended after the tag to indicate this is a modified version of the source image. |
-| `modified_image_prefix` | `''` | If set, the modified image will be tagged with this reference. If the purpose of the image is not changing, it may be enough to rely on `modified_append_tag` to identify that this is a modified version of the source image. `modified_append_tag` will still be appended to this reference. |
+| `target_image` | `[undefined]` | If set, the modified image will be tagged with `target_image + modified_append_tag`. If `target_image` is not set, the modified image will be tagged with `source_image + modified_append_tag`. If the purpose of the image is not changing, it may be enough to rely on the `source_image + modified_append_tag` tag to identify that this is a modified version of the source image. |
+
 
 **Variables used for yum update**
 
@@ -19,7 +20,7 @@ A role to allow modification to container images built for the TripleO project.
 |-------------------|---------------------|----------------------|
 | `source_image` | `[undefined]` | See modify image variables |
 | `modified_append_tag` | `date +-modified-%Y%m%d%H%M%S` | See modify image variables |
-| `modified_image_prefix` | `''` | See modify image variables |
+| `target_image` | `''` | See modify image variables |
 | `yum_repos_dir_path` | `None` | Optional path of directory to be used as `/etc/yum.repos.d` during the update |
 | `compare_host_packages` | `False` | If `True`, skip yum update when package versions match host package versions |
 
