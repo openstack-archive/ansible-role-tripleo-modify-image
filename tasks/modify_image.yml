@@ -2,6 +2,12 @@
   tags:
     - always
 
+- name: Ensure that modify_dir_path is defined
+  assert:
+    that:
+      - modify_dir_path is defined
+      - modify_dir_path | length > 0
+
 - name: Set default modified_append_tag
   set_fact:
     modified_append_tag: "{{ lookup('pipe','date +-modified-%Y%m%d%H%M%S') }}"
