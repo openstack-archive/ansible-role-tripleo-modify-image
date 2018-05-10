@@ -16,5 +16,4 @@ COPY host_packages.json /tmp/
 
 RUN /tmp/yum_update.sh
 
-USER {{ original_user }}
-
+USER "{{ original_user }}"
