@@ -9,5 +9,4 @@ if [ -f /tmp/host_packages.json ]; then
     fi
 fi
 yum -y update
-yum clean all
 rm -rf /var/cache/yum
