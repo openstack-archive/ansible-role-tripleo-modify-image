@@ -17,10 +17,15 @@
     prefix: tripleo-modify-image
   register: context_dir
 
+- name: Set modify_dir_path
+  set_fact:
+    modify_dir_path: "{{ context_dir.path }}"
+
+
 - name: Copy directory used for /etc/yum.repos.d
   copy:
     src: "{{ yum_repos_dir_path }}"
-    dest: "{{ context_dir.path }}/yum.repos.d"
+    dest: "{{ modify_dir_path }}/yum.repos.d"
   when: yum_repos_dir_path is defined
 
 - name: Generate host package json file
@@ -32,26 +37,25 @@
 
     - copy:
         content: "{{ rpm_query_output.stdout | from_yaml | to_nice_json }}"
-        dest: "{{ context_dir.path }}/host_packages.json"
+        dest: "{{ modify_dir_path }}/host_packages.json"
 
   when: compare_host_packages
 
-- name: Write Dockerfile to {{ context_dir.path }}
+- name: Write Dockerfile to {{ modify_dir_path }}
   template:
     src: Dockerfile.j2
-    dest: "{{ context_dir.path }}/Dockerfile"
+    dest: "{{ modify_dir_path }}/Dockerfile"
 
 - name: Write yum_update.sh
   copy:
     src: yum_update.sh
-    dest: "{{ context_dir.path }}/yum_update.sh"
+    dest: "{{ modify_dir_path }}/yum_update.sh"
     mode: '0555'
 
 - name: Write compare-package-json.py
   copy:
     src: compare-package-json.py
-    dest: "{{ context_dir.path }}/compare-package-json.py"
+    dest: "{{ modify_dir_path }}/compare-package-json.py"
     mode: '0555'
 
-- name: Modify image
-  import_tasks: modify_image.yml
+- include_tasks: modify_image.yml
