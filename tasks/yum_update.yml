@@ -28,6 +28,28 @@
     dest: "{{ modify_dir_path }}/yum.repos.d"
   when: yum_repos_dir_path is defined
 
+- name: Copy local file repos to context directory
+  shell: |
+    #!/bin/sh
+    set -ex
+
+    # discover repos with local packages
+    repos=$(sed -n 's/baseurl=file:\/\///p' {{ yum_repos_dir_path }}/*.repo)
+
+    mkdir repos
+    for repo in $repos ; do
+        if [ -d $repo ]; then
+            target_dir=repos$repo
+            echo "copying $repo to $target_dir"
+            mkdir -p $target_dir
+            cp -a $repo/* $target_dir
+        fi
+    done
+  args:
+    chdir: "{{ modify_dir_path }}"
+  when: yum_repos_dir_path is defined
+
+
 - name: Generate host package json file
   block:
 
