@@ -15,6 +15,6 @@ COPY repos /
 COPY host_packages.json /tmp/
 {% endif %}
 
-RUN /tmp/yum_update.sh
+RUN /tmp/yum_update.sh "{{ update_repo }}"
 
 USER "{{ original_user }}"

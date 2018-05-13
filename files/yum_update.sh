@@ -8,5 +8,11 @@ if [ -f /tmp/host_packages.json ]; then
         exit
     fi
 fi
-yum -y update
+
+packages_for_update=
+if [ -n "$1" ]; then
+    packages_for_update=("$(repoquery --disablerepo='*' --enablerepo=$1 --qf %{NAME} -a)")
+fi
+
+yum -y update $packages_for_update
 rm -rf /var/cache/yum
