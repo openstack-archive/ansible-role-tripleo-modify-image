@@ -21,8 +21,7 @@ A role to allow modification to container images built for the TripleO project.
 | `source_image` | `[undefined]` | See modify image variables |
 | `modified_append_tag` | `date +-modified-%Y%m%d%H%M%S` | See modify image variables |
 | `target_image` | `''` | See modify image variables |
-| `update_repo` | `''` | If set, packages from this repo will be updated. Other
-repos will only be used for dependencies of these updates.|
+| `update_repo` | `''` | If set, packages from this repo will be updated. Other repos will only be used for dependencies of these updates.|
 | `yum_repos_dir_path` | `None` | Optional path of directory to be used as `/etc/yum.repos.d` during the update |
 | `compare_host_packages` | `False` | If `True`, skip yum update when package versions match host package versions |
 
