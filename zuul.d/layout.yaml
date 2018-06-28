@@ -1,0 +1,11 @@
+
+- project:
+    templates:
+      - tripleo-multinode-container-minimal
+    check:
+      jobs:
+        - tripleo-ci-centos-7-scenario001-multinode-oooq-container
+    gate:
+      queue: tripleo
+      jobs:
+        - tripleo-ci-centos-7-scenario001-multinode-oooq-container
