@@ -7,6 +7,7 @@ COPY yum_update.sh /tmp/
 COPY compare-package-json.py /tmp/
 
 {% if yum_repos_dir_path is defined %}
+RUN rm -rf /etc/yum.repos.d/
 COPY yum.repos.d /etc/
 COPY repos /
 {% endif %}
