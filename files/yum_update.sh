@@ -10,7 +10,7 @@ if [ -f /tmp/host_packages.json ]; then
 fi
 
 packages_for_update=
-if [ -n "$1" ]; then
+if [ -n "$1" ] && command -v repoquery >/dev/null 2>&1; then
     packages_for_update=("$(repoquery --disablerepo='*' --enablerepo=$1 --qf %{NAME} -a)")
 fi
 
