@@ -65,7 +65,7 @@
 
 - name: Write Dockerfile to {{ modify_dir_path }}
   template:
-    src: Dockerfile.j2
+    src: Dockerfile-yum.j2
     dest: "{{ modify_dir_path }}/Dockerfile"
 
 - name: Write yum_update.sh

@@ -75,7 +75,7 @@ the modification, for example:
 The following playbook will produce a modified image with the tag
 `:latest-updated` which will do a yum update using the host's /etc/yum.repos.d.
 The yum update will only occur if there are differences between host and image
-package versions. In this playbook the tasks_from is set as a variable instead
+package versions. In this playbook the tasks\_from is set as a variable instead
 of an `import_role` parameter.
 
     - hosts: localhost
@@ -89,6 +89,25 @@ of an `import_role` parameter.
           compare_host_packages: true
           yum_repos_dir_path: /etc/yum.repos.d
           modified_append_tag: updated
+
+### RPM install ###
+
+The following playbook will produce a modified image with RPMs from the
+specified rpms\_path on the local filesystem installed as a new layer
+for the container. The new container tag is appened with the '-hotfix'
+suffix. Useful for creating adhoc hotfix containers with local RPMs with no
+network connectivity.
+
+    - hosts: localhost
+      tasks:
+      - name: include tripleo-modify-image
+        import_role:
+          name: tripleo-modify-image
+        vars:
+          tasks_from: rpm_install.yml
+          source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
+          rpms_path: /foo/bar
+          modified_append_tag: -hotfix
 
 ## License ##
 
