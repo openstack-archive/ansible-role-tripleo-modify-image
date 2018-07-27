@@ -1,11 +1,16 @@
-
 - project:
     templates:
+      - publish-to-pypi
       - tripleo-multinode-container-minimal
     check:
       jobs:
+        - openstack-tox-linters
         - tripleo-ci-centos-7-scenario001-multinode-oooq-container
     gate:
-      queue: tripleo
       jobs:
+        - openstack-tox-linters
         - tripleo-ci-centos-7-scenario001-multinode-oooq-container
+      queue: tripleo
+    post:
+      jobs:
+        - publish-openstack-python-branch-tarball
