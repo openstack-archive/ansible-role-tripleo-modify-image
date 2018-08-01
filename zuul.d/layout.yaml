@@ -1,6 +1,6 @@
 - project:
     templates:
-      - publish-to-pypi
+      - release-openstack-server
       - tripleo-multinode-container-minimal
     check:
       jobs:
