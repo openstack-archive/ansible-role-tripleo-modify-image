@@ -12,6 +12,7 @@ A role to allow modification to container images built for the TripleO project.
 | `modify_dir_path` | `[undefined]` | Mandatory path to the directory containing the Dockerfile to modify the image |
 | `modified_append_tag` | `date +-modified-%Y%m%d%H%M%S` | String to be appended after the tag to indicate this is a modified version of the source image. |
 | `target_image` | `[undefined]` | If set, the modified image will be tagged with `target_image + modified_append_tag`. If `target_image` is not set, the modified image will be tagged with `source_image + modified_append_tag`. If the purpose of the image is not changing, it may be enough to rely on the `source_image + modified_append_tag` tag to identify that this is a modified version of the source image. |
+| `container_build_tool` | `docker` | Tool used to build containers, can be 'docker' or 'buildah' |
 
 
 **Variables used for yum update**
@@ -24,6 +25,7 @@ A role to allow modification to container images built for the TripleO project.
 | `update_repo` | `''` | If set, packages from this repo will be updated. Other repos will only be used for dependencies of these updates.|
 | `yum_repos_dir_path` | `None` | Optional path of directory to be used as `/etc/yum.repos.d` during the update |
 | `compare_host_packages` | `False` | If `True`, skip yum update when package versions match host package versions |
+| `container_build_tool` | `docker` | See modify image variables |
 
 ## Requirements ##
 
@@ -53,6 +55,7 @@ The following playbook will produce a modified image with the tag
         vars:
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
           modify_dir_path: /path/to/example_modify_dir
+          container_build_tool: docker # or buildah
 
 The directory `example_modify_dir` contains the `Dockerfile` which will perform
 the modification, for example:
@@ -89,6 +92,7 @@ of an `import_role` parameter.
           compare_host_packages: true
           yum_repos_dir_path: /etc/yum.repos.d
           modified_append_tag: updated
+          container_build_tool: docker # or buildah
 
 ### RPM install ###
 

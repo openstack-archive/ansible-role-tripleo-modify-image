@@ -1,2 +1,3 @@
 compare_host_packages: false
 update_repo: ''
+container_build_tool: 'docker'

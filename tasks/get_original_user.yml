@@ -1,0 +1,23 @@
+- when: container_build_tool == 'docker'
+  block:
+    - name: Inspect image with Docker
+      docker_image_facts:
+        name: "{{ source_image }}"
+      register: source_image_facts
+    - name: Set original_user with Docker
+      set_fact:
+        original_user: "{{ source_image_facts.images[0].Config.User }}"
+
+- when: container_build_tool == 'buildah'
+  block:
+    - name: Inspect image with Buildah
+      command: buildah inspect {{ source_image }}
+      register: source_image_facts
+      become: true
+    - name: Set config with Buildah
+      set_fact:
+       buildah_config: "{{ source_image_facts.stdout_lines | join('') | from_json }}"
+    - name: Set original_user with Buildah
+      set_fact:
+       original_user: "{{ buildah_config['Docker']['config']['User'] }}"
+

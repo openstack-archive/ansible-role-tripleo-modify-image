@@ -31,6 +31,7 @@
     line: "LABEL modified_append_tag={{ modified_append_tag }}"
 
 - name: Modify image
-  command: docker build --tag {{ target_image | default(source_image) }}{{ modified_append_tag }} --file Dockerfile.modified --network host ./
+  command: "{{ build_commands[container_build_tool] }} --tag {{ target_image | default(source_image) }}{{ modified_append_tag }} --file Dockerfile.modified --network host ./"
+  become: true
   args:
     chdir: "{{ modify_dir_path }}"

@@ -2,14 +2,7 @@
   tags:
     - always
 
-- name: Inspect image
-  docker_image_facts:
-    name: "{{ source_image }}"
-  register: source_image_facts
-
-- name: Set original_user
-  set_fact:
-    original_user: "{{ source_image_facts.images[0].Config.User }}"
+- import_tasks: get_original_user.yml
 
 - name: Create image build context directory
   tempfile:
