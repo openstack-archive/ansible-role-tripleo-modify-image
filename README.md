@@ -26,6 +26,18 @@ A role to allow modification to container images built for the TripleO project.
 | `yum_repos_dir_path` | `None` | Optional path of directory to be used as `/etc/yum.repos.d` during the update |
 | `container_build_tool` | `docker` | See modify image variables |
 
+
+**Variables used for dev install**
+
+| Name              | Default Value       | Description          |
+|-------------------|---------------------|----------------------|
+| `source_image` | `[undefined]` | See modify image variables |
+| `modified_append_tag` | `date +-modified-%Y%m%d%H%M%S` | See modify image variables |
+| `target_image` | `''` | See modify image variables |
+| `container_build_tool` | `docker` | See modify image variables |
+| `refspecs` | `[]` | An array of project/refspec pairs that will be installed into the generated container. Currently only supports python source projects. |
+
+
 ## Requirements ##
 
  - ansible >= 2.4
@@ -111,6 +123,28 @@ network connectivity.
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
           rpms_path: /foo/bar
           modified_append_tag: -hotfix
+
+### Dev install ###
+
+The following playbook will produce a modified image with Python source
+code installed via pip. To minimize dependencies within the container
+we generate the sdist locally and then copy it into the resulting
+container image as an sdist tarball to run pip install locally.
+
+    - hosts: localhost
+      connection: local
+      tasks:
+      - name: dev install heat-api
+        import_role:
+          name: tripleo-modify-image
+        vars:
+          tasks_from: dev_install.yml
+          source_image: docker.io/tripleomaster/centos-binary-heat-api:current-tripleo
+          refspecs:
+            -
+              project: heat
+              refspec: refs/changes/12/1234/3
+          modified_append_tag: -devel
 
 ## License ##
 
