@@ -19,5 +19,6 @@ if [ -z $package_for_update ]; then
     exit
 fi
 
+yum install -y yum-plugin-priorities
 yum -y update $packages_for_update
 rm -rf /var/cache/yum
