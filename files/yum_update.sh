@@ -14,7 +14,7 @@ if [ -n "$1" ] && command -v repoquery >/dev/null 2>&1; then
     packages_for_update=("$(repoquery --disablerepo='*' --enablerepo=$1 --qf %{NAME} -a)")
 fi
 
-if [ -z $packages_for_update ]; then
+if [ -z "$packages_for_update" ]; then
     echo "No packages were found for update..."
     exit
 fi
