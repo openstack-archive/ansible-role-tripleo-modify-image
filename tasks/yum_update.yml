@@ -37,20 +37,6 @@
     chdir: "{{ modify_dir_path }}"
   when: yum_repos_dir_path is defined
 
-
-- name: Generate host package json file
-  block:
-
-    - command: |
-        rpm -qa --qf '"%{NAME}": "%{VERSION}-%{RELEASE}"\n'
-      register: rpm_query_output
-
-    - copy:
-        content: "{{ rpm_query_output.stdout | from_yaml | to_nice_json }}"
-        dest: "{{ modify_dir_path }}/host_packages.json"
-
-  when: compare_host_packages
-
 - name: Write Dockerfile to {{ modify_dir_path }}
   template:
     src: Dockerfile-yum.j2
@@ -60,12 +46,6 @@
   copy:
     src: yum_update.sh
     dest: "{{ modify_dir_path }}/yum_update.sh"
-    mode: '0555'
-
-- name: Write compare-package-json.py
-  copy:
-    src: compare-package-json.py
-    dest: "{{ modify_dir_path }}/compare-package-json.py"
     mode: '0555'
 
 - include_tasks: modify_image.yml
