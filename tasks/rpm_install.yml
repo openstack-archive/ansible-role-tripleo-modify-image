@@ -44,3 +44,8 @@
     mode: '0555'
 
 - include_tasks: modify_image.yml
+
+- name: Clean modify directory
+  file:
+    state: absent
+    path: "{{ modify_dir_path }}"
