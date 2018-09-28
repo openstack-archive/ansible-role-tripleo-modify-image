@@ -1,6 +1,5 @@
 - project:
     templates:
-      - release-openstack-server
       - tripleo-multinode-container-minimal
     check:
       jobs:
