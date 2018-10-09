@@ -3,6 +3,9 @@
     - name: Inspect image with Docker
       docker_image_facts:
         name: "{{ source_image }}"
+      retries: 5
+      delay: 5
+      until: source_image_facts.images is defined
       register: source_image_facts
     - name: Set original_user with Docker
       set_fact:
