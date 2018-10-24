@@ -30,7 +30,7 @@
   copy:
     src: "{{ item }}"
     dest: "{{ modify_dir_path }}"
-  loop: "{{ rpms_list }}"
+  with_list: "{{ rpms_list }}"
 
 - name: Write Dockerfile to {{ modify_dir_path }}
   template:
