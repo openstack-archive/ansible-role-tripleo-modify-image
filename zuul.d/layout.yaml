@@ -4,11 +4,11 @@
     check:
       jobs:
         - openstack-tox-linters
-        - tripleo-ci-centos-7-scenario001-multinode-oooq-container
+        - tripleo-ci-centos-7-scenario001-standalone
     gate:
       jobs:
         - openstack-tox-linters
-        - tripleo-ci-centos-7-scenario001-multinode-oooq-container
+        - tripleo-ci-centos-7-scenario001-standalone
       queue: tripleo
     post:
       jobs:
