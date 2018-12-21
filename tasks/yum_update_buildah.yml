@@ -1,0 +1,49 @@
+- import_tasks: precheck.yml
+  tags:
+    - always
+
+- name: From image {{ source_image }}
+  command: buildah from {{ source_image }}
+  register: from_image_cmd
+
+- name: Set from_image
+  set_fact:
+    from_image: "{{ from_image_cmd.stdout }}"
+
+- name: Run buildah config
+  command: >
+    buildah config
+      --label modified_append_tag={{ modified_append_tag }}
+      --workingdir / {{ from_image }}
+
+- name: Copy yum_update.sh
+  command: >
+    buildah copy
+      {{ from_image }}
+      files/yum_update.sh /tmp/yum_update.sh
+
+- name: List file repos
+  shell: sed -n 's|baseurl=file://||p' *.repo
+  args:
+    chdir: "{{ yum_repos_dir_path }}"
+  register: file_repos
+
+- name: Run yum_update.sh
+  command: >
+    buildah run
+      --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
+      {% for repo in file_repos.stdout_lines %}
+        {% if repo|exists %}
+          --volume {{ repo }}:{{ repo }}
+        {% endif %}
+      {% endfor %}
+      --user root
+      --net host
+      {{ from_image }}
+      /tmp/yum_update.sh "{{ update_repo }}"
+
+- name: Commit changes to image {{ target_image | default(source_image) }}
+  command: >
+    buildah commit
+      {{ from_image }}
+      {{ target_image | default(source_image) }}

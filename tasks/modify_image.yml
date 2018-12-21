@@ -8,11 +8,6 @@
       - modify_dir_path is defined
       - modify_dir_path | length > 0
 
-- name: Set default modified_append_tag
-  set_fact:
-    modified_append_tag: "{{ lookup('pipe','date +-modified-%Y%m%d%H%M%S') }}"
-  when: modified_append_tag is undefined
-
 - name: Create Dockerfile tempfile name
   tempfile:
     path: "{{ modify_dir_path }}"
