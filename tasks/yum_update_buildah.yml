@@ -16,11 +16,27 @@
       --label modified_append_tag={{ modified_append_tag }}
       --workingdir / {{ from_image }}
 
+- name: Create tempfile name for yum_update.sh
+  tempfile:
+    state: file
+  register: yum_update
+
+- name: Prepare yum_update.sh script
+  copy:
+    src: files/yum_update.sh
+    dest: "{{ yum_update.path }}"
+    mode: 0755
+
 - name: Copy yum_update.sh
   command: >
     buildah copy
       {{ from_image }}
-      files/yum_update.sh /tmp/yum_update.sh
+      {{ yum_update.path }} /tmp/yum_update.sh
+
+- name: Remove temporary yum_update.sh script
+  file:
+    path: "{{ yum_update.path }}"
+    state: absent
 
 - name: List file repos
   shell: sed -n 's|baseurl=file://||p' *.repo
