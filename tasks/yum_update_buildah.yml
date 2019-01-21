@@ -58,8 +58,8 @@
       {{ from_image }}
       /tmp/yum_update.sh "{{ update_repo }}"
 
-- name: Commit changes to image {{ target_image | default(source_image) }}
+- name: Commit changes to image {{ target_image | default(source_image) }}{{ modified_append_tag }}
   command: >
     buildah commit
       {{ from_image }}
-      {{ target_image | default(source_image) }}
+      {{ target_image | default(source_image) }}{{ modified_append_tag }}
