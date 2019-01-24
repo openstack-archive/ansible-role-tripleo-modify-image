@@ -27,17 +27,6 @@
     dest: "{{ yum_update.path }}"
     mode: 0755
 
-- name: Copy yum_update.sh
-  command: >
-    buildah copy
-      {{ from_image }}
-      {{ yum_update.path }} /tmp/yum_update.sh
-
-- name: Remove temporary yum_update.sh script
-  file:
-    path: "{{ yum_update.path }}"
-    state: absent
-
 - name: List file repos
   shell: sed -n 's|baseurl=file://||p' *.repo
   args:
@@ -47,6 +36,7 @@
 - name: Run yum_update.sh
   command: >
     buildah run
+      --volume {{ yum_update.path }}:/tmp/yum_update.sh
       --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
       {% for repo in file_repos.stdout_lines %}
         {% if repo|exists %}
@@ -57,6 +47,11 @@
       --net host
       {{ from_image }}
       /tmp/yum_update.sh "{{ update_repo }}"
+
+- name: Remove temporary yum_update.sh script
+  file:
+    path: "{{ yum_update.path }}"
+    state: absent
 
 - name: Commit changes to image {{ target_image | default(source_image) }}{{ modified_append_tag }}
   command: >
