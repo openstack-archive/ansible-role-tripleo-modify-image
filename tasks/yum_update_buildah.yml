@@ -47,6 +47,10 @@
       --net host
       {{ from_image }}
       /tmp/yum_update.sh "{{ update_repo }}"
+  retries: 3
+  delay: 3
+  register: result
+  until: result.rc == 0
 
 - name: Remove temporary yum_update.sh script
   file:
