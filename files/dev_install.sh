@@ -1,4 +1,4 @@
-set -e
+set -eou pipefail
 
 # Cherry-pick a refspec
 # $1 : project name e.g. keystone

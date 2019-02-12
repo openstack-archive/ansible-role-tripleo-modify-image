@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eux
+set -eoux pipefail
 
 packages_for_update=
 if [ -n "$1" ] && command -v repoquery >/dev/null 2>&1; then
@@ -14,6 +14,13 @@ if [ -z "$packages_for_update" ]; then
     exit
 fi
 
-yum install -y yum-plugin-priorities
-yum -y update $packages_for_update
-rm -rf /var/cache/yum
+PKG="$(command -v dnf || command -v yum)"
+PKG_MGR="$(echo ${PKG:(-3)})"
+
+if [ $PKG_MGR == "dnf" ]; then
+    $PKG install -y dnf-plugins-core
+else:
+    $PKG install -y yum-plugin-priorities
+fi
+$PKG -y update $packages_for_update
+rm -rf /var/cache/$PKG_MGR

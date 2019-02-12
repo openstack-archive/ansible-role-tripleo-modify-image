@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -ex
+set -eox pipefail
 
 rpm -Uvh /tmp/*.rpm
 rm -f /tmp/*.rpm
