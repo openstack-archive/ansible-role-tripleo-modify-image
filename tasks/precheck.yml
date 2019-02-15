@@ -1,3 +1,4 @@
+---
 - name: Ensure that source_image is defined
   assert:
     that:
@@ -5,7 +6,8 @@
       - source_image | length > 0
 
 - name: Ensure that container_build_tool is correctly set
-  fail: msg="{{ container_build_tool }} is not a valid value for container_build_tool. Pick docker or buildah."
+  fail: msg="{{ container_build_tool }} is not a valid value for
+             container_build_tool. Pick docker or buildah."
   when: container_build_tool not in ['docker', 'buildah']
 
 - name: Set default modified_append_tag

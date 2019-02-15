@@ -1,3 +1,4 @@
+---
 - import_tasks: precheck.yml
   tags:
     - always
@@ -36,7 +37,7 @@
      {{ build_commands[container_build_tool] }} \
          --tag {{ target_image | default(source_image) }}{{ modified_append_tag }} \
          --file {{ dockerfile.path }} --network host ./
-  #FIXME: buildah should not required root commands to build an image
+  # FIXME: buildah should not required root commands to build an image
   become: "{{ true if build_commands[container_build_tool] == 'buildah' else false }}"
   args:
     chdir: "{{ modify_dir_path }}"

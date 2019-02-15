@@ -1,3 +1,4 @@
+---
 - import_tasks: precheck.yml
   tags:
     - always
@@ -57,7 +58,8 @@
     path: "{{ yum_update.path }}"
     state: absent
 
-- name: Commit changes to image {{ target_image | default(source_image) }}{{ modified_append_tag }}
+- name: Commit changes to image
+        ({{ target_image | default(source_image) }}{{ modified_append_tag }})
   command: >
     buildah commit
       {{ from_image }}

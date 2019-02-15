@@ -1,3 +1,4 @@
+---
 - import_tasks: precheck.yml
   tags:
     - always
@@ -18,7 +19,7 @@
   find:
     paths: "{{ rpms_path }}"
     patterns: "^.*?\\.rpm$"
-    use_regex: yes
+    use_regex: true
   when: rpms_path is defined
   register: context_rpms
 

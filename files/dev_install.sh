@@ -3,7 +3,7 @@ set -e
 # Cherry-pick a refspec
 # $1 : project name e.g. keystone
 # $2 : Gerrit refspec(s) to cherry pick
-function cherrypick(){
+function cherrypick {
     local PROJ_NAME=$1
     local REFSPECS="$2"
 
