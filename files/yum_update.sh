@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -eoux pipefail
+set -eou pipefail
 
 packages_for_update=
 if [ -n "$1" ] && command -v repoquery >/dev/null 2>&1; then
