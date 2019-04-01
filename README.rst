@@ -1,61 +1,109 @@
-# TripleO Modify Image #
+TripleO Modify Image
+====================
 
 A role to allow modification to container images built for the TripleO project.
 
-## Role Variables ##
+Role Variables
+--------------
 
-**Variables used for modify image**
+.. list-table:: Variables used for modify image
+   :widths: auto
+   :header-rows: 1
 
-| Name              | Default Value       | Description          |
-|-------------------|---------------------|----------------------|
-| `source_image` | `[undefined]` | Mandatory fully qualified reference to the source image to be modified. The supplied Dockerfile will be copied and modified to make the FROM directive match this variable. |
-| `modify_dir_path` | `[undefined]` | Mandatory path to the directory containing the Dockerfile to modify the image |
-| `modified_append_tag` | `date +-modified-%Y%m%d%H%M%S` | String to be appended after the tag to indicate this is a modified version of the source image. |
-| `target_image` | `[undefined]` | If set, the modified image will be tagged with `target_image + modified_append_tag`. If `target_image` is not set, the modified image will be tagged with `source_image + modified_append_tag`. If the purpose of the image is not changing, it may be enough to rely on the `source_image + modified_append_tag` tag to identify that this is a modified version of the source image. |
-| `container_build_tool` | `docker` | Tool used to build containers, can be 'docker' or 'buildah' |
+   * - Name
+     - Default Value
+     - Description
+   * - `source_image`
+     - `[undefined]`
+     - Mandatory fully qualified reference to the source image to be modified. The supplied Dockerfile will be copied and modified to make the FROM directive match this variable.
+   * - `modify_dir_path`
+     - `[undefined]`
+     - Mandatory path to the directory containing the Dockerfile to modify the image
+   * - `modified_append_tag`
+     - `date +-modified-%Y%m%d%H%M%S`
+     - String to be appended after the tag to indicate this is a modified version of the source image.
+   * - `target_image`
+     - `[undefined]`
+     - If set, the modified image will be tagged with `target_image + modified_append_tag`. If `target_image` is not set, the modified image will be tagged with `source_image + modified_append_tag`. If the purpose of the image is not changing, it may be enough to rely on the `source_image + modified_append_tag` tag to identify that this is a modified version of the source image.
+   * - `container_build_tool`
+     - `docker`
+     - Tool used to build containers, can be 'docker' or 'buildah'
+
+.. list-table:: Variables used for yum update
+   :widths: auto
+   :header-rows: 1
+
+   * - Name
+     - Default Value
+     - Description
+   * - `source_image`
+     - `[undefined]`
+     - See modify image variables
+   * - `modified_append_tag`
+     - `date +-modified-%Y%m%d%H%M%S`
+     - See modify image variables
+   * - `target_image`
+     - `''`
+     - See modify image variables
+   * - `update_repo`
+     - `''`
+     - If set, packages from this repo will be updated. Other repos will only be used for dependencies of these updates.
+   * - `yum_repos_dir_path`
+     - `None`
+     - Optional path of directory to be used as `/etc/yum.repos.d` during the update
+   * - `container_build_tool`
+     - `docker`
+     - See modify image variables
 
 
-**Variables used for yum update**
+.. list-table:: Variables used for def install
+   :widths: auto
+   :header-rows: 1
 
-| Name              | Default Value       | Description          |
-|-------------------|---------------------|----------------------|
-| `source_image` | `[undefined]` | See modify image variables |
-| `modified_append_tag` | `date +-modified-%Y%m%d%H%M%S` | See modify image variables |
-| `target_image` | `''` | See modify image variables |
-| `update_repo` | `''` | If set, packages from this repo will be updated. Other repos will only be used for dependencies of these updates.|
-| `yum_repos_dir_path` | `None` | Optional path of directory to be used as `/etc/yum.repos.d` during the update |
-| `container_build_tool` | `docker` | See modify image variables |
+   * - Name
+     - Default Value
+     - Description
+   * - `source_image`
+     - `[undefined]`
+     - See modify image variables
+   * - `modified_append_tag`
+     - `date +-modified-%Y%m%d%H%M%S`
+     - See modify image variables
+   * - `target_image`
+     - `''`
+     - See modify image variables
+   * - `container_build_tool`
+     - `docker`
+     - See modify image variables
+   * - `refspecs`
+     - `[]`
+     - An array of project/refspec pairs that will be installed into the generated container. Currently only supports python source projects.
 
 
-**Variables used for dev install**
-
-| Name              | Default Value       | Description          |
-|-------------------|---------------------|----------------------|
-| `source_image` | `[undefined]` | See modify image variables |
-| `modified_append_tag` | `date +-modified-%Y%m%d%H%M%S` | See modify image variables |
-| `target_image` | `''` | See modify image variables |
-| `container_build_tool` | `docker` | See modify image variables |
-| `refspecs` | `[]` | An array of project/refspec pairs that will be installed into the generated container. Currently only supports python source projects. |
-
-
-## Requirements ##
+Requirements
+------------
 
  - ansible >= 2.4
  - python >= 2.6
  - docker-py >= 1.7.0
  - Docker API >= 1.20
 
-## Dependencies ##
+Dependencies
+------------
 
 None
 
-## Example Playbooks ##
+Example Playbooks
+-----------------
 
-### Modify Image ###
+Modify Image
+~~~~~~~~~~~~
 
 The following playbook will produce a modified image with the tag
 `:latest-modified-<timestamp>` based on the Dockerfile in the custom directory
 `/path/to/example_modify_dir`.
+
+.. code-block::
 
     - hosts: localhost
       tasks:
@@ -71,6 +119,8 @@ The following playbook will produce a modified image with the tag
 The directory `example_modify_dir` contains the `Dockerfile` which will perform
 the modification, for example:
 
+.. code-block::
+
     # This will be replaced in the file Dockerfile.modified
     FROM centos-binary-nova-api
 
@@ -84,13 +134,16 @@ the modification, for example:
     # switch the container back to the default user
     USER nova
 
-### Yum update ###
+Yum update
+~~~~~~~~~~
 
 The following playbook will produce a modified image with the tag
 `:latest-updated` which will do a yum update using the host's /etc/yum.repos.d.
 The yum update will only occur if there are differences between host and image
 package versions. In this playbook the tasks\_from is set as a variable instead
 of an `import_role` parameter.
+
+.. code-block::
 
     - hosts: localhost
       tasks:
@@ -105,13 +158,16 @@ of an `import_role` parameter.
           modified_append_tag: updated
           container_build_tool: docker # or buildah
 
-### RPM install ###
+RPM install
+~~~~~~~~~~~
 
 The following playbook will produce a modified image with RPMs from the
 specified rpms\_path on the local filesystem installed as a new layer
 for the container. The new container tag is appened with the '-hotfix'
 suffix. Useful for creating adhoc hotfix containers with local RPMs with no
 network connectivity.
+
+.. code-block::
 
     - hosts: localhost
       tasks:
@@ -124,12 +180,15 @@ network connectivity.
           rpms_path: /foo/bar
           modified_append_tag: -hotfix
 
-### Dev install ###
+Dev install
+~~~~~~~~~~~
 
 The following playbook will produce a modified image with Python source
 code installed via pip. To minimize dependencies within the container
 we generate the sdist locally and then copy it into the resulting
 container image as an sdist tarball to run pip install locally.
+
+.. code-block::
 
     - hosts: localhost
       connection: local
@@ -146,6 +205,7 @@ container image as an sdist tarball to run pip install locally.
               refspec: refs/changes/12/1234/3
           modified_append_tag: -devel
 
-## License ##
+License
+-------
 
 Apache 2.0
