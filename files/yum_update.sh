@@ -5,7 +5,7 @@ set -eou pipefail
 packages_for_update=
 if [ -n "$1" ] && command -v repoquery >/dev/null 2>&1; then
     installed_versions=$(rpm -qa --qf "%{NAME} = %{VERSION}-%{RELEASE}\n" | sort)
-    available_versions=$(repoquery --provides --disablerepo='*' --enablerepo=$1 -a | sort)
+    available_versions=$(repoquery --quiet --provides --disablerepo='*' --enablerepo=$1 -a | sort)
     uptodate_versions=$(comm -12 <(printf "%s\n" "$installed_versions") <(printf "%s\n" "$available_versions"))
 
 
@@ -29,7 +29,7 @@ if [ $PKG_MGR == "dnf" ]; then
     if ! echo $installed | grep -qw dnf-plugins-core; then
         $PKG install -y dnf-plugins-core
     fi
-else:
+else
     if ! echo $installed | grep -qw yum-plugin-priorities; then
         $PKG install -y yum-plugin-priorities
     fi
