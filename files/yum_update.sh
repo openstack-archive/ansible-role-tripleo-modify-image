@@ -2,10 +2,19 @@
 
 set -eou pipefail
 
+PKG="$(command -v dnf || command -v yum)"
+PKG_MGR="$(echo ${PKG:(-3)})"
+
+if [ $PKG_MGR == "dnf" ]; then
+    REPOQUERY_CMD="$PKG repoquery"
+else
+    REPOQUERY_CMD="$(command -v repoquery)"
+fi
+
 packages_for_update=
-if [ -n "$1" ] && command -v repoquery >/dev/null 2>&1; then
+if [ -n "$1" ] && [[ -n $REPOQUERY_CMD ]]; then
     installed_versions=$(rpm -qa --qf "%{NAME} = %{VERSION}-%{RELEASE}\n" | sort)
-    available_versions=$(repoquery --quiet --provides --disablerepo='*' --enablerepo=$1 -a | sort)
+    available_versions=$($REPOQUERY_CMD --quiet --provides --disablerepo='*' --enablerepo=$1 -a | sort)
     uptodate_versions=$(comm -12 <(printf "%s\n" "$installed_versions") <(printf "%s\n" "$available_versions"))
 
 
@@ -22,8 +31,6 @@ if [ -z "$packages_for_update" ]; then
     exit
 fi
 
-PKG="$(command -v dnf || command -v yum)"
-PKG_MGR="$(echo ${PKG:(-3)})"
 
 if [ $PKG_MGR == "dnf" ]; then
     if ! echo $installed | grep -qw dnf-plugins-core; then
