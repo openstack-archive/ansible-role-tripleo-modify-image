@@ -33,13 +33,14 @@ fi
 
 
 if [ $PKG_MGR == "dnf" ]; then
-    if ! echo $installed | grep -qw dnf-plugins-core; then
-        $PKG install -y dnf-plugins-core
-    fi
+    plugin=dnf-plugins-core
 else
-    if ! echo $installed | grep -qw yum-plugin-priorities; then
-        $PKG install -y yum-plugin-priorities
-    fi
+    plugin=yum-plugin-priorities
 fi
+
+if $(! echo $installed | grep -qw $plugin) && $($PKG list available $plugin >/dev/null 2>&1); then
+    $PKG install -y $plugin
+fi
+
 $PKG -y update $packages_for_update
 rm -rf /var/cache/$PKG_MGR
