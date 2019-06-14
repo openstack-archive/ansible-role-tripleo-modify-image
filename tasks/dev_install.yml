@@ -28,8 +28,20 @@
 
 - name: Git checkout the refspecs into local temp dir
   command: "/bin/bash dev_install.sh {{ item.project }} {{ item.refspec }}"
+  environment:
+    GERRIT_MODE: 1
   args:
     chdir: "{{ modify_dir_path }}"
   loop: "{{ refspecs }}"
+  when: item > 0
+
+- name: Copy the Python directories into local temp dir
+  command: "/bin/bash dev_install.sh {{ item }}"
+  environment:
+    GERRIT_MODE: 0
+  args:
+    chdir: "{{ modify_dir_path }}"
+  loop: "{{ python_dir }}"
+  when: item > 0
 
 - include_tasks: modify_image.yml

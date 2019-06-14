@@ -27,6 +27,22 @@ function cherrypick {
 
 }
 
+# Copy a Python directory
+# $1 : Python directory to copy and install to generate a tarball.
+function copy {
+    local PYTHON_DIR=$1
+
+    rm -rf dev
+    cp -r $PYTHON_DIR dev
+    cd dev
+    SKIP_GENERATE_AUTHORS=1 SKIP_WRITE_GIT_CHANGELOG=1 python setup.py sdist
+    cp dist/*.tar.gz ../
+}
+
 mkdir -p refspec_projects
 cd refspec_projects
-cherrypick $1 $2
+if [[ "$GERRIT_MODE" == 1 ]]; then
+    cherrypick $1 $2
+else
+    copy $1
+fi

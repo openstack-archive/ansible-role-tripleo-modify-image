@@ -56,7 +56,7 @@ Role Variables
      - See modify image variables
 
 
-.. list-table:: Variables used for def install
+.. list-table:: Variables used for dev install
    :widths: auto
    :header-rows: 1
 
@@ -78,6 +78,9 @@ Role Variables
    * - `refspecs`
      - `[]`
      - An array of project/refspec pairs that will be installed into the generated container. Currently only supports python source projects.
+   * - `python_dir`
+     - `[]`
+     - Directory which contains a Python project ready to be installed with pip.
 
 
 Requirements
@@ -188,6 +191,8 @@ code installed via pip. To minimize dependencies within the container
 we generate the sdist locally and then copy it into the resulting
 container image as an sdist tarball to run pip install locally.
 
+It can be used to pull a review from OpenDev Gerrit:
+
 .. code-block::
 
     - hosts: localhost
@@ -204,6 +209,23 @@ container image as an sdist tarball to run pip install locally.
               project: heat
               refspec: refs/changes/12/1234/3
           modified_append_tag: -devel
+
+or it can be used to build an image from a local Python directory:
+
+.. code-block::
+
+    - hosts: localhost
+      connection: local
+      tasks:
+      - name: dev install heat-api
+        import_role:
+          name: tripleo-modify-image
+        vars:
+          tasks_from: dev_install.yml
+          source_image: docker.io/tripleomaster/centos-binary-heat-api:current-tripleo
+          modified_append_tag: -devel
+          python_dir:
+            - /home/joe/git/openstack/heat
 
 License
 -------

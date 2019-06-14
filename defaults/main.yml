@@ -1,3 +1,5 @@
 ---
 update_repo: ''
 container_build_tool: 'docker'
+python_dir: []
+refspecs: []
