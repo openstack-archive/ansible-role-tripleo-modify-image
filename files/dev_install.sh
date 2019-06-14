@@ -14,11 +14,11 @@ function cherrypick {
     fi
 
     if [ ! -d "$PROJ_NAME" ]; then
-        git clone "https://git.openstack.org/openstack/$PROJ_NAME"
+        git clone "https://opendev.org/openstack/$PROJ_NAME"
     fi
     cd "$PROJ_NAME"
     for REFSPEC in $REFSPECS; do
-        git fetch "https://review.openstack.org/openstack/$PROJ_NAME" "$REFSPEC"
+        git fetch "https://review.opendev.org/openstack/$PROJ_NAME" "$REFSPEC"
         git cherry-pick FETCH_HEAD || git cherry-pick --abort
     done
 
