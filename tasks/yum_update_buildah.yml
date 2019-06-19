@@ -34,24 +34,42 @@
     chdir: "{{ yum_repos_dir_path }}"
   register: file_repos
 
-- name: Run yum_update.sh
-  command: >
-    buildah run
-      --volume {{ yum_update.path }}:/tmp/yum_update.sh
-      --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
-      {% for repo in file_repos.stdout_lines %}
-        {% if repo|exists %}
-          --volume {{ repo }}:{{ repo }}
-        {% endif %}
-      {% endfor %}
-      --user root
-      --net host
-      {{ from_image }}
-      /tmp/yum_update.sh "{{ update_repo }}"
-  retries: 3
-  delay: 3
-  register: result
-  until: result.rc == 0
+- block:
+    - name: Run yum_update.sh
+      command: >
+        buildah run
+          --volume {{ yum_update.path }}:/tmp/yum_update.sh
+          --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
+          {% for repo in file_repos.stdout_lines %}
+            {% if repo|exists %}
+              --volume {{ repo }}:{{ repo }}
+            {% endif %}
+          {% endfor %}
+          --user root
+          --net host
+          {{ from_image }}
+          /tmp/yum_update.sh "{{ update_repo }}"
+      register: result
+
+  rescue:
+    - name: Run yum_update.sh (retry)
+      command: >
+        buildah --debug run
+          --volume {{ yum_update.path }}:/tmp/yum_update.sh
+          --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
+          {% for repo in file_repos.stdout_lines %}
+            {% if repo|exists %}
+              --volume {{ repo }}:{{ repo }}
+            {% endif %}
+          {% endfor %}
+          --user root
+          --net host
+          {{ from_image }}
+          bash -x /tmp/yum_update.sh "{{ update_repo }}"
+      retries: 2
+      delay: 3
+      register: result
+      until: result.rc == 0
 
 - name: Remove temporary yum_update.sh script
   file:
