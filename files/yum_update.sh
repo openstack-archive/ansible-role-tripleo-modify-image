@@ -14,7 +14,8 @@ fi
 packages_for_update=
 if [ -n "$1" ] && [[ -n $REPOQUERY_CMD ]]; then
     installed_versions=$(rpm -qa --qf "%{NAME} = %{VERSION}-%{RELEASE}\n" | sort)
-    available_versions=$($REPOQUERY_CMD --quiet --provides --disablerepo='*' --enablerepo=$1 -a | sort)
+    # dnf repoquery return 1 when repo does not exists, but standalone does not
+    available_versions=$($REPOQUERY_CMD --quiet --provides --disablerepo='*' --enablerepo=$1 -a | sort || true)
     uptodate_versions=$(comm -12 <(printf "%s\n" "$installed_versions") <(printf "%s\n" "$available_versions"))
 
 
