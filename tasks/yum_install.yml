@@ -1,0 +1,10 @@
+---
+- import_tasks: precheck.yml
+  tags:
+    - always
+
+- import_tasks: yum_install_buildah.yml
+  when: container_build_tool == 'buildah'
+
+- import_tasks: yum_install_docker.yml
+  when: container_build_tool == 'docker'

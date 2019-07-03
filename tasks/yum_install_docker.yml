@@ -1,0 +1,57 @@
+---
+- import_tasks: precheck.yml
+  tags:
+    - always
+
+- import_tasks: get_original_user.yml
+
+- name: Create image build context directory
+  tempfile:
+    state: directory
+    prefix: tripleo-modify-image
+  register: context_dir
+
+- name: Set modify_dir_path
+  set_fact:
+    modify_dir_path: "{{ context_dir.path }}"
+
+- name: Copy local file repos to context directory
+  shell: |
+    #!/bin/sh
+    set -ex
+
+    cp -a {{ yum_repos_dir_path }} {{ modify_dir_path }}/yum.repos.d
+
+    # discover repos with local packages
+    repos=$(sed -n 's/baseurl=file:\/\///p' {{ yum_repos_dir_path }}/*.repo)
+
+    mkdir repos
+    for repo in $repos ; do
+        if [ -d $repo ]; then
+            target_dir=repos$repo
+            echo "copying $repo to $target_dir"
+            mkdir -p $target_dir
+            cp -a $repo/* $target_dir
+        fi
+    done
+  args:
+    chdir: "{{ modify_dir_path }}"
+  when: yum_repos_dir_path is defined
+
+- name: Write Dockerfile to {{ modify_dir_path }}
+  template:
+    src: Dockerfile-yum-install.j2
+    dest: "{{ modify_dir_path }}/Dockerfile"
+
+- name: Write yum_install.sh
+  copy:
+    src: yum_install.sh
+    dest: "{{ modify_dir_path }}/yum_install.sh"
+    mode: '0555'
+
+- include_tasks: modify_image.yml
+
+- name: Clean modify directory
+  file:
+    state: absent
+    path: "{{ modify_dir_path }}"
