@@ -56,6 +56,33 @@ Role Variables
      - See modify image variables
 
 
+.. list-table:: Variables used for yum install
+   :widths: auto
+   :header-rows: 1
+
+   * - Name
+     - Default Value
+     - Description
+   * - `source_image`
+     - `[undefined]`
+     - See modify image variables
+   * - `modified_append_tag`
+     - `date +-modified-%Y%m%d%H%M%S`
+     - See modify image variables
+   * - `target_image`
+     - `''`
+     - See modify image variables
+   * - `yum_packages`
+     - `[]`
+     - Provide a list of packages to install via yum
+   * - `yum_repos_dir_path`
+     - `None`
+     - Optional path of directory to be used as `/etc/yum.repos.d` during the update
+   * - `container_build_tool`
+     - `docker`
+     - See modify image variables
+
+
 .. list-table:: Variables used for dev install
    :widths: auto
    :header-rows: 1
@@ -159,6 +186,29 @@ of an `import_role` parameter.
           compare_host_packages: true
           yum_repos_dir_path: /etc/yum.repos.d
           modified_append_tag: updated
+          container_build_tool: docker # or buildah
+
+Yum install
+~~~~~~~~~~-
+
+The following playbook will produce a modified image with the tag
+`:latest-updated` which will do a yum install of the requested packages
+using the host's /etc/yum.repos.d.  In this playbook the tasks\_from is set as
+a variable instead of an `import_role` parameter.
+
+.. code-block::
+
+    - hosts: localhost
+      tasks:
+      - name: include tripleo-modify-image
+        import_role:
+          name: tripleo-modify-image
+        vars:
+          tasks_from: yum_install.yml
+          source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
+          compare_host_packages: true
+          yum_repos_dir_path: /etc/yum.repos.d
+          yum_packages: ['foobar-nova-plugin', 'fizzbuzz-nova-plugin']
           container_build_tool: docker # or buildah
 
 RPM install
