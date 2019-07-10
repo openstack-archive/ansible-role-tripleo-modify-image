@@ -189,7 +189,7 @@ of an `import_role` parameter.
           container_build_tool: docker # or buildah
 
 Yum install
-~~~~~~~~~~-
+~~~~~~~~~~~
 
 The following playbook will produce a modified image with the tag
 `:latest-updated` which will do a yum install of the requested packages
