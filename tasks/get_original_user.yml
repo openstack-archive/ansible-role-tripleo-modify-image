@@ -17,8 +17,12 @@
             name: "{{ source_image }}"
           retries: 5
           delay: 5
-          until: source_image_facts.images is defined
-          register: source_image_facts
+          until: downloaded_image_facts.images is defined
+          register: downloaded_image_facts
+        # https://github.com/ansible/ansible/issues/15710#issuecomment-216645922
+        - name: Override source_image_facts
+          set_fact:
+            source_image_facts: "{{ downloaded_image_facts }}"
       when: source_image_facts.images | length == 0
     - name: Set original_user with Docker
       set_fact:
