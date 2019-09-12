@@ -137,9 +137,9 @@ The following playbook will produce a modified image with the tag
 
     - hosts: localhost
       tasks:
-      - name: include tripleo-modify-image
+      - name: include ansible-role-tripleo-modify-image
         import_role:
-          name: tripleo-modify-image
+          name: ansible-role-tripleo-modify-image
           tasks_from: modify_image.yml
         vars:
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
@@ -177,9 +177,9 @@ of an `import_role` parameter.
 
     - hosts: localhost
       tasks:
-      - name: include tripleo-modify-image
+      - name: include ansible-role-tripleo-modify-image
         import_role:
-          name: tripleo-modify-image
+          name: ansible-role-tripleo-modify-image
         vars:
           tasks_from: yum_update.yml
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
@@ -187,6 +187,11 @@ of an `import_role` parameter.
           yum_repos_dir_path: /etc/yum.repos.d
           modified_append_tag: updated
           container_build_tool: docker # or buildah
+
+Note, if you have a locally installed gating repo, you can add
+``update_repo: gating-repo``. This may be the case for the consequent in-place
+deployments, like those performed with the CI reproducer script.
+
 
 Yum install
 ~~~~~~~~~~~
@@ -200,9 +205,9 @@ a variable instead of an `import_role` parameter.
 
     - hosts: localhost
       tasks:
-      - name: include tripleo-modify-image
+      - name: include ansible-role-tripleo-modify-image
         import_role:
-          name: tripleo-modify-image
+          name: ansible-role-tripleo-modify-image
         vars:
           tasks_from: yum_install.yml
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
@@ -224,9 +229,9 @@ network connectivity.
 
     - hosts: localhost
       tasks:
-      - name: include tripleo-modify-image
+      - name: include ansible-role-tripleo-modify-image
         import_role:
-          name: tripleo-modify-image
+          name: ansible-role-tripleo-modify-image
         vars:
           tasks_from: rpm_install.yml
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
@@ -250,7 +255,7 @@ It can be used to pull a review from OpenDev Gerrit:
       tasks:
       - name: dev install heat-api
         import_role:
-          name: tripleo-modify-image
+          name: ansible-role-tripleo-modify-image
         vars:
           tasks_from: dev_install.yml
           source_image: docker.io/tripleomaster/centos-binary-heat-api:current-tripleo
@@ -269,7 +274,7 @@ or it can be used to build an image from a local Python directory:
       tasks:
       - name: dev install heat-api
         import_role:
-          name: tripleo-modify-image
+          name: ansible-role-tripleo-modify-image
         vars:
           tasks_from: dev_install.yml
           source_image: docker.io/tripleomaster/centos-binary-heat-api:current-tripleo
