@@ -169,9 +169,9 @@ Yum update
 
 The following playbook will produce a modified image with the tag
 `:latest-updated` which will do a yum update using the host's /etc/yum.repos.d.
-The yum update will only occur if there are differences between host and image
-package versions. In this playbook the tasks\_from is set as a variable instead
-of an `import_role` parameter.
+Only file repositories will be used (with baseurl=file://...).
+In this playbook the tasks\_from is set as a variable instead of an
+`import_role` parameter.
 
 .. code-block::
 
@@ -183,7 +183,6 @@ of an `import_role` parameter.
         vars:
           tasks_from: yum_update.yml
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
-          compare_host_packages: true
           yum_repos_dir_path: /etc/yum.repos.d
           modified_append_tag: updated
           container_build_tool: docker # or buildah
@@ -211,7 +210,6 @@ a variable instead of an `import_role` parameter.
         vars:
           tasks_from: yum_install.yml
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
-          compare_host_packages: true
           yum_repos_dir_path: /etc/yum.repos.d
           yum_packages: ['foobar-nova-plugin', 'fizzbuzz-nova-plugin']
           container_build_tool: docker # or buildah
