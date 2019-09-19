@@ -2,7 +2,7 @@
 
 set -eou pipefail
 
-PKG="$(command -v dnf || command -v yum)"
+PKG={{ pkg_mgr }}
 PKG_MGR="$(echo ${PKG:(-3)})"
 
 if [ $PKG_MGR == "dnf" ]; then
@@ -44,4 +44,8 @@ if $(! echo $installed | grep -qw $plugin) && $($PKG list available $plugin >/de
 fi
 
 $PKG -y update $packages_for_update
+{% if yum_cache is defined and yum_cache %}
+sync
+{% else %}
 rm -rf /var/cache/$PKG_MGR
+{% endif %}

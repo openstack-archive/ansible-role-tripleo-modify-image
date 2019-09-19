@@ -22,9 +22,21 @@
     state: file
   register: yum_update
 
+- name: Identify the primary pkg mgr (dnf or yum)
+  shell: command -v dnf || command -v yum
+  register: pkg_mgr_output
+
+- name: Set fact for the used pkg mgr binary
+  set_fact:
+    pkg_mgr: "{{ pkg_mgr_output.stdout }}"
+
+- name: Set fact for the used pkg mgr cache path
+  set_fact:
+    cache_path: /var/cache/{{ pkg_mgr.split('/')[-1] }}
+
 - name: Prepare yum_update.sh script
-  copy:
-    src: files/yum_update.sh
+  template:
+    src: yum_update.sh.j2
     dest: "{{ yum_update.path }}"
     mode: 0755
 
@@ -34,12 +46,58 @@
     chdir: "{{ yum_repos_dir_path }}"
   register: file_repos
 
+- name: Define bind-mount modes for yum cache to be populated or used
+  when: yum_cache is defined and yum_cache
+  block:
+    - name: Check for the pkg mgr cache existence
+      stat:
+        path: "{{ yum_cache }}"
+        get_checksum: false
+      register: yum_cache_stat
+
+    - name: Check for the pkg mgr cach contents
+      shell: ls -A {{ yum_cache }}
+      register: yum_cache_contents
+      when: yum_cache_stat.stat.exists|default()
+
+    - name: Purge the pgh mgr cache on host
+      file:
+        path: "{{ yum_cache }}"
+        state: absent
+      when:
+        - force_purge_yum_cache|bool
+        - yum_cache_contents is defined
+        - yum_cache_contents.stdout
+
+    - name: Ensure the pgh mgr cache path exists
+      file:
+        path: "{{ yum_cache }}"
+        state: directory
+        mode: 0755
+        setype: svirt_sandbox_file_t
+      when: not yum_cache_stat.stat.exists|default()
+
+    - name: Use the pre-populated non-empty cache as an overlay fs
+      set_fact:
+        cache_volume: "{{ yum_cache }}:{{ cache_path }}:O"
+      when:
+        - yum_cache_stat.stat.exists|default()
+        - yum_cache_contents.stdout
+
+    - name: Define the cache populating mode otherwise
+      set_fact:
+        cache_volume: "{{ yum_cache }}:{{ cache_path }}:rw,z"
+      when: cache_volume is not defined
+
 - block:
     - name: Run yum_update.sh
       command: >
         buildah run
           --volume {{ yum_update.path }}:/tmp/yum_update.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
+          {% if cache_volume is defined and cache_volume %}
+          --volume {{ cache_volume }}
+          {% endif %}
           {% for repo in file_repos.stdout_lines %}
             {% if repo|exists %}
               --volume {{ repo }}:{{ repo }}
@@ -57,6 +115,9 @@
         buildah --debug run
           --volume {{ yum_update.path }}:/tmp/yum_update.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
+          {% if cache_volume is defined and cache_volume %}
+          --volume {{ cache_volume }}
+          {% endif %}
           {% for repo in file_repos.stdout_lines %}
             {% if repo|exists %}
               --volume {{ repo }}:{{ repo }}

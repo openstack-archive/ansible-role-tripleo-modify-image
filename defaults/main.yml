@@ -4,3 +4,4 @@ container_build_tool: 'docker'
 python_dir: []
 refspecs: []
 yum_packages: []
+force_purge_yum_cache: false
