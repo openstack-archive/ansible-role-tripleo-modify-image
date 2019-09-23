@@ -41,7 +41,7 @@
           --volume {{ yum_update.path }}:/tmp/yum_update.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
           {% for repo in file_repos.stdout_lines %}
-            {% if repo|exists %}
+            {% if repo is exists %}
               --volume {{ repo }}:{{ repo }}
             {% endif %}
           {% endfor %}
@@ -58,7 +58,7 @@
           --volume {{ yum_update.path }}:/tmp/yum_update.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
           {% for repo in file_repos.stdout_lines %}
-            {% if repo|exists %}
+            {% if repo is exists %}
               --volume {{ repo }}:{{ repo }}
             {% endif %}
           {% endfor %}
