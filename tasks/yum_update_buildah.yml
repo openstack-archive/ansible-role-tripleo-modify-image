@@ -22,15 +22,15 @@
     state: file
   register: yum_update
 
-- name: Identify the primary pkg mgr (dnf or yum)
+- name: Identify the primary package manager (dnf or yum)
   shell: command -v dnf || command -v yum
   register: pkg_mgr_output
 
-- name: Set fact for the used pkg mgr binary
+- name: Set fact for the used package manager binary
   set_fact:
     pkg_mgr: "{{ pkg_mgr_output.stdout }}"
 
-- name: Set fact for the used pkg mgr cache path
+- name: Set fact for the used cache path
   set_fact:
     cache_path: /var/cache/{{ pkg_mgr.split('/')[-1] }}
 
@@ -49,18 +49,18 @@
 - name: Define bind-mount modes for yum cache to be populated or used
   when: yum_cache is defined and yum_cache
   block:
-    - name: Check for the pkg mgr cache existence
+    - name: Check for the cache existence
       stat:
         path: "{{ yum_cache }}"
         get_checksum: false
       register: yum_cache_stat
 
-    - name: Check for the pkg mgr cach contents
+    - name: Check for the cache contents
       shell: ls -A {{ yum_cache }}
       register: yum_cache_contents
       when: yum_cache_stat.stat.exists|default()
 
-    - name: Purge the pgh mgr cache on host
+    - name: Purge the cache on host
       file:
         path: "{{ yum_cache }}"
         state: absent
@@ -69,7 +69,7 @@
         - yum_cache_contents is defined
         - yum_cache_contents.stdout
 
-    - name: Ensure the pgh mgr cache path exists
+    - name: Ensure the cache path exists
       file:
         path: "{{ yum_cache }}"
         state: directory
