@@ -44,8 +44,8 @@
     dest: "{{ modify_dir_path }}/Dockerfile"
 
 - name: Write yum_update.sh
-  copy:
-    src: yum_update.sh
+  template:
+    src: yum_update.sh.j2
     dest: "{{ modify_dir_path }}/yum_update.sh"
     mode: '0555'
 
