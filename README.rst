@@ -54,7 +54,15 @@ Role Variables
    * - `container_build_tool`
      - `docker`
      - See modify image variables
-
+   * - `yum_cache`
+     - `None`
+     - Optional path to the host directory for yum cache during the update.
+       Requires an overlay-enabled FS that also supports SE context relabling.
+       Works only with container_build_tool=buildah.
+   * - `force_purge_yum_cache`
+     - `False`
+     - Optional argument that tells buildah to forcefully re-populate the yum
+       cache with new contents.
 
 .. list-table:: Variables used for yum install
    :widths: auto
@@ -185,7 +193,8 @@ In this playbook the tasks\_from is set as a variable instead of an
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
           yum_repos_dir_path: /etc/yum.repos.d
           modified_append_tag: updated
-          container_build_tool: docker # or buildah
+          container_build_tool: buildah # or docker
+          yum_cache: /tmp/containers-updater/yum_cache
 
 Note, if you have a locally installed gating repo, you can add
 ``update_repo: gating-repo``. This may be the case for the consequent in-place
