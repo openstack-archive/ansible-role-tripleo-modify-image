@@ -143,3 +143,7 @@
     buildah commit
       {{ from_image }}
       {{ target_image | default(source_image) }}{{ modified_append_tag }}
+
+- name: Cleanup working container
+  command: >
+    buildah rm {{ from_image }}
