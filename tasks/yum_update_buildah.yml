@@ -99,7 +99,7 @@
           --volume {{ cache_volume }}
           {% endif %}
           {% for repo in file_repos.stdout_lines %}
-            {% if repo|exists %}
+            {% if repo is exists %}
               --volume {{ repo }}:{{ repo }}
             {% endif %}
           {% endfor %}
@@ -119,7 +119,7 @@
           --volume {{ cache_volume }}
           {% endif %}
           {% for repo in file_repos.stdout_lines %}
-            {% if repo|exists %}
+            {% if repo is exists %}
               --volume {{ repo }}:{{ repo }}
             {% endif %}
           {% endfor %}
