@@ -147,3 +147,6 @@
 - name: Cleanup working container
   command: >
     buildah rm {{ from_image }}
+  retries: 5
+  delay: 5
+  ignore_errors: true
