@@ -1,5 +1,7 @@
 set -eou pipefail
 
+PYTHON_CMD=$(command -v python3 || command -v python2 || command -v python)
+
 # Cherry-pick a refspec
 # $1 : project name e.g. keystone
 # $2 : Gerrit refspec(s) to cherry pick
@@ -22,7 +24,7 @@ function cherrypick {
         git cherry-pick FETCH_HEAD || git cherry-pick --abort
     done
 
-    SKIP_GENERATE_AUTHORS=1 SKIP_WRITE_GIT_CHANGELOG=1 python setup.py sdist
+    SKIP_GENERATE_AUTHORS=1 SKIP_WRITE_GIT_CHANGELOG=1 $PYTHON_CMD setup.py sdist
     cp dist/*.tar.gz ../
 
 }
@@ -35,7 +37,7 @@ function copy {
     rm -rf dev
     cp -r $PYTHON_DIR dev
     cd dev
-    SKIP_GENERATE_AUTHORS=1 SKIP_WRITE_GIT_CHANGELOG=1 python setup.py sdist
+    SKIP_GENERATE_AUTHORS=1 SKIP_WRITE_GIT_CHANGELOG=1 $PYTHON_CMD setup.py sdist
     cp dist/*.tar.gz ../
 }
 
