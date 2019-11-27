@@ -33,7 +33,7 @@
   args:
     chdir: "{{ modify_dir_path }}"
   loop: "{{ refspecs }}"
-  when: item > 0
+  when: item | length > 0
 
 - name: Copy the Python directories into local temp dir
   command: "/bin/bash dev_install.sh {{ item }}"
@@ -42,6 +42,6 @@
   args:
     chdir: "{{ modify_dir_path }}"
   loop: "{{ python_dir }}"
-  when: item > 0
+  when: item | length > 0
 
 - include_tasks: modify_image.yml
