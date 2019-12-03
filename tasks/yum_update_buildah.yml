@@ -95,6 +95,7 @@
         buildah run
           --volume {{ yum_update.path }}:/tmp/yum_update.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
+          --volume /etc/pki:/etc/pki
           {% if cache_volume is defined and cache_volume %}
           --volume {{ cache_volume }}
           {% endif %}
@@ -115,6 +116,7 @@
         buildah --debug run
           --volume {{ yum_update.path }}:/tmp/yum_update.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
+          --volume /etc/pki:/etc/pki
           {% if cache_volume is defined and cache_volume %}
           --volume {{ cache_volume }}
           {% endif %}
