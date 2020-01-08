@@ -5,6 +5,10 @@ set -eou pipefail
 PKG={{ pkg_mgr }}
 PKG_MGR="$(echo ${PKG:(-3)})"
 
+{% if rpms_path is defined %}
+$PKG -y localupdate /tmp/*.rpm
+rm -f /tmp/*.rpm
+{% else %}
 if [ $PKG_MGR == "dnf" ]; then
     REPOQUERY_CMD="$PKG repoquery"
 else
@@ -17,7 +21,6 @@ if [ -n "$1" ] && [[ -n $REPOQUERY_CMD ]]; then
     # dnf repoquery return 1 when repo does not exists, but standalone does not
     available_versions=$($REPOQUERY_CMD --quiet --provides --disablerepo='*' --enablerepo=$1 -a | sort || true)
     uptodate_versions=$(comm -12 <(printf "%s\n" "$installed_versions") <(printf "%s\n" "$available_versions"))
-
 
     installed=$(printf "%s\n" "$installed_versions" | cut -d= -f1 | sort)
     available=$(printf "%s\n" "$available_versions" | cut -d= -f1 | sort)
@@ -32,7 +35,6 @@ if [ -z "$packages_for_update" ]; then
     exit
 fi
 
-
 if [ $PKG_MGR == "dnf" ]; then
     plugin=dnf-plugins-core
 else
@@ -46,8 +48,14 @@ fi
 YUM_OPTS="{% if yum_cache is defined and yum_cache %}--setopt=keepcache=1{% endif %}"
 
 $PKG -y update $YUM_OPTS $packages_for_update
+{% endif %}
+
 {% if yum_cache is defined and yum_cache %}
 sync
 {% else %}
 rm -rf /var/cache/$PKG_MGR
+{% endif %}
+
+{% if container_build_tool is defined and container_build_tool == 'docker' %}
+rm -f /tmp/yum_install.sh
 {% endif %}

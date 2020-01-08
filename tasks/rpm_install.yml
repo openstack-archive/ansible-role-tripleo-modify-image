@@ -15,23 +15,7 @@
   set_fact:
     modify_dir_path: "{{ context_dir.path }}"
 
-- name: List RPMs
-  find:
-    paths: "{{ rpms_path }}"
-    patterns: "^.*?\\.rpm$"
-    use_regex: true
-  when: rpms_path is defined
-  register: context_rpms
-
-- name: Set rpms_list
-  set_fact:
-    rpms_list: "{{  context_rpms.files|json_query('[*].path') }}"
-
-- name: Copy RPMs to context dir
-  copy:
-    src: "{{ item }}"
-    dest: "{{ modify_dir_path }}"
-  with_list: "{{ rpms_list }}"
+- import_tasks: copy_rpms.yml
 
 - name: Write Dockerfile to {{ modify_dir_path }}
   template:

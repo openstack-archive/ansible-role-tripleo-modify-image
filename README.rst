@@ -45,6 +45,10 @@ Role Variables
    * - `target_image`
      - `''`
      - See modify image variables
+   * - `rpms_path`
+     - `''`
+     - If set, packages present in rpms_path will be updated but dependencies must also be included if required as yum
+       is called with localupdate.
    * - `update_repo`
      - `''`
      - If set, packages from this repo will be updated. Other repos will only be used for dependencies of these updates.
@@ -195,6 +199,21 @@ In this playbook the tasks\_from is set as a variable instead of an
           modified_append_tag: updated
           container_build_tool: buildah # or docker
           yum_cache: /tmp/containers-updater/yum_cache
+          rpms_path: /home/stack/rpms
+
+.. code-block::
+
+    - hosts: localhost
+      tasks:
+      - name: include ansible-role-tripleo-modify-image
+        import_role:
+          name: ansible-role-tripleo-modify-image
+        vars:
+          tasks_from: yum_update.yml
+          source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
+          modified_append_tag: updated
+          container_build_tool: docker # or buildah
+          rpms_path: /home/stack/rpms/
 
 Note, if you have a locally installed gating repo, you can add
 ``update_repo: gating-repo``. This may be the case for the consequent in-place
@@ -242,7 +261,7 @@ network connectivity.
         vars:
           tasks_from: rpm_install.yml
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
-          rpms_path: /foo/bar
+          rpms_path: /home/stack/rpms
           modified_append_tag: -hotfix
 
 Dev install

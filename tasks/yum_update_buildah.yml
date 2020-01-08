@@ -34,6 +34,8 @@
   set_fact:
     cache_path: /var/cache/{{ pkg_mgr.split('/')[-1] }}
 
+- import_tasks: copy_rpms.yml
+
 - name: Prepare yum_update.sh script
   template:
     src: yum_update.sh.j2
@@ -45,6 +47,7 @@
   args:
     chdir: "{{ yum_repos_dir_path }}"
   register: file_repos
+  when: rpms_path is undefined
 
 - name: Define bind-mount modes for yum cache to be populated or used
   when: yum_cache is defined and yum_cache
