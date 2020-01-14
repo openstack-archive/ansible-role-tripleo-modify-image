@@ -15,6 +15,8 @@
   set_fact:
     modify_dir_path: "{{ context_dir.path }}"
 
+- import_tasks: copy_rpms.yml
+
 - name: Copy local file repos to context directory
   shell: |
     #!/bin/sh
@@ -36,7 +38,7 @@
     done
   args:
     chdir: "{{ modify_dir_path }}"
-  when: yum_repos_dir_path is defined
+  when: yum_repos_dir_path is defined and rpms_path is undefined
 
 - name: Write Dockerfile to {{ modify_dir_path }}
   template:
