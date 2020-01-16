@@ -23,11 +23,11 @@ if [ -n "$1" ] && [[ -n $REPOQUERY_CMD ]]; then
     uptodate_versions=$(comm -12 <(printf "%s\n" "$installed_versions") <(printf "%s\n" "$available_versions"))
 
     installed=$(printf "%s\n" "$installed_versions" | cut -d= -f1 | sort)
-    available=$(printf "%s\n" "$available_versions" | cut -d= -f1 | sort)
+    available=$(printf "%s\n" "$available_versions" | cut -d= -f1 | sort -u)
     uptodate=$(printf "%s\n" "$uptodate_versions" | cut -d= -f1 | sort)
 
-    installed_for_update=$(comm -23 <(printf "%s\n" $installed) <(printf "%s\n" $uptodate))
-    packages_for_update=$(comm -12 <(printf "%s\n" $installed_for_update) <(printf "%s\n" $available))
+    installed_for_update=$(comm -23 <(printf "%s\n" "$installed") <(printf "%s\n" "$uptodate"))
+    packages_for_update=$(comm -12 <(printf "%s\n" "$installed_for_update") <(printf "%s\n" "$available"))
 fi
 
 if [ -z "$packages_for_update" ]; then
