@@ -11,6 +11,11 @@ RUN rm -rf /etc/yum.repos.d/
 COPY yum.repos.d /etc/yum.repos.d
 COPY repos /
 {% endif %}
+{% if rpms_path is defined %}
+{% for rpm in rpms_list %}
+COPY {{ rpm | basename }} /tmp/
+{% endfor %}
+{% endif %}
 
 RUN /tmp/yum_update.sh "{{ update_repo }}"
 
