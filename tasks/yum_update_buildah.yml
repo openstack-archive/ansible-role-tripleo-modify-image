@@ -142,10 +142,12 @@
     path: "{{ yum_update.path }}"
     state: absent
 
+# NOTE(aschultz): remove --format docker when oci images are properly supported
 - name: Commit changes to image
         ({{ target_image | default(source_image) }}{{ modified_append_tag }})
   command: >
     buildah commit
+      --format docker
       {{ from_image }}
       {{ target_image | default(source_image) }}{{ modified_append_tag }}
 

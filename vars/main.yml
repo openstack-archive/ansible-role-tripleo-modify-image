@@ -1,5 +1,6 @@
 ---
+# NOTE(aschultz): remove --format docker when oci images are properly supported
 # we support 'docker' or 'buildah'
 build_commands:
   docker: docker build
-  buildah: buildah bud
+  buildah: buildah bud --format docker
