@@ -80,12 +80,18 @@
         setype: svirt_sandbox_file_t
       when: not yum_cache_stat.stat.exists|default()
 
+    - name: Check if the cache path has been already mounted
+      command: findmnt {{ yum_cache }}
+      register: findmnt_result
+      failed_when: false
+
     - name: Use the pre-populated non-empty cache as an overlay fs
       set_fact:
         cache_volume: "{{ yum_cache }}:{{ cache_path }}:O"
       when:
         - yum_cache_stat.stat.exists|default()
         - yum_cache_contents.stdout
+        - findmnt_result.rc != 0
 
     - name: Define the cache populating mode otherwise
       set_fact:
@@ -114,15 +120,12 @@
       register: result
 
   rescue:
-    - name: Run yum_update.sh (retry)
+    - name: Run yum_update.sh (retry without yum cache)
       command: >
         buildah --debug run
           --volume {{ yum_update.path }}:/tmp/yum_update.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
           --volume /etc/pki:/etc/pki
-          {% if cache_volume is defined and cache_volume %}
-          --volume {{ cache_volume }}
-          {% endif %}
           {% for repo in file_repos.stdout_lines %}
             {% if repo is exists %}
               --volume {{ repo }}:{{ repo }}
