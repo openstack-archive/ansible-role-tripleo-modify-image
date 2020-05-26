@@ -19,6 +19,7 @@
   copy:
     src: "{{ modify_dir_path }}/Dockerfile"
     dest: "{{ dockerfile.path }}"
+    remote_src: true
 
 - name: Replace FROM directive
   lineinfile:
@@ -38,6 +39,6 @@
          --tag {{ target_image | default(source_image) }}{{ modified_append_tag }} \
          --file {{ dockerfile.path }} --network host ./
   # FIXME: buildah should not required root commands to build an image
-  become: "{{ true if build_commands[container_build_tool] == 'buildah' else false }}"
+  become: "{{ container_build_tool == 'buildah' }}"
   args:
     chdir: "{{ modify_dir_path }}"
