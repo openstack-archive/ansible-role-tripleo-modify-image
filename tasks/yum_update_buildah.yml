@@ -6,6 +6,9 @@
 - name: From image {{ source_image }}
   command: buildah from {{ source_image }}
   register: from_image_cmd
+  retries: 3
+  delay: 5
+  until: from_image_cmd is succeeded
 
 - name: Set from_image
   set_fact:
