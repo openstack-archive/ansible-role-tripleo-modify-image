@@ -1,15 +1,23 @@
 ---
 - project:
     templates:
-      - tripleo-multinode-container-minimal
+      - tripleo-multinode-container-minimal-pipeline
     check:
       jobs:
         - openstack-tox-linters
-        - tripleo-ci-centos-8-scenario001-standalone
+        - tripleo-ci-centos-8-content-provider
+        - tripleo-ci-centos-8-scenario001-standalone: &scenario001
+            vars:
+              consumer_job: true
+              tags:
+                - standalone
+            dependencies:
+              - tripleo-ci-centos-8-content-provider
     gate:
       jobs:
         - openstack-tox-linters
-        - tripleo-ci-centos-8-scenario001-standalone
+        - tripleo-ci-centos-8-content-provider
+        - tripleo-ci-centos-8-scenario001-standalone: *scenario001
       queue: tripleo
     post:
       jobs:
