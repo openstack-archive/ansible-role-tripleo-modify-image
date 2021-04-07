@@ -10,7 +10,7 @@ function cherrypick {
     local REFSPECS="$2"
 
     # check that git is installed
-    if ! rpm -qi git &> /dev/null; then
+    if ! rpm -qi git &> /dev/null && ! rpm -qi git-core &> /dev/null; then
         echo "Please install git before using this module."
         exit 1
     fi
