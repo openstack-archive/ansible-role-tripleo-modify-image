@@ -40,6 +40,7 @@
         buildah run
           --volume {{ yum_install.path }}:/tmp/yum_install.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
+          --volume /etc/yum/vars:/etc/yum/vars
           {% for repo in file_repos.stdout_lines %}
             {% if repo is exists %}
               --volume {{ repo }}:{{ repo }}
@@ -57,6 +58,7 @@
         buildah --debug run
           --volume {{ yum_install.path }}:/tmp/yum_install.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
+          --volume /etc/yum/vars:/etc/yum/vars
           {% for repo in file_repos.stdout_lines %}
             {% if repo is exists %}
               --volume {{ repo }}:{{ repo }}
