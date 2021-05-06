@@ -22,6 +22,10 @@
     state: file
   register: yum_install
 
+- import_tasks: yum_common.yml
+  tags:
+    - always
+
 - name: Prepare yum_install.sh script
   copy:
     src: files/yum_install.sh
@@ -40,7 +44,7 @@
         buildah run
           --volume {{ yum_install.path }}:/tmp/yum_install.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
-          --volume /etc/yum/vars:/etc/yum/vars
+          --volume /etc/{{ pkg_mgr_suffix }}/vars:/etc/{{ pkg_mgr_suffix }}/vars
           {% for repo in file_repos.stdout_lines %}
             {% if repo is exists %}
               --volume {{ repo }}:{{ repo }}
@@ -58,7 +62,7 @@
         buildah --debug run
           --volume {{ yum_install.path }}:/tmp/yum_install.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
-          --volume /etc/yum/vars:/etc/yum/vars
+          --volume /etc/{{ pkg_mgr_suffix }}/vars:/etc/{{ pkg_mgr_suffix }}/vars
           {% for repo in file_repos.stdout_lines %}
             {% if repo is exists %}
               --volume {{ repo }}:{{ repo }}

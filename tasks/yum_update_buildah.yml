@@ -25,17 +25,13 @@
     state: file
   register: yum_update
 
-- name: Identify the primary package manager (dnf or yum)
-  shell: command -v dnf || command -v yum
-  register: pkg_mgr_output
-
-- name: Set fact for the used package manager binary
-  set_fact:
-    pkg_mgr: "{{ pkg_mgr_output.stdout }}"
+- import_tasks: yum_common.yml
+  tags:
+    - always
 
 - name: Set fact for the used cache path
   set_fact:
-    cache_path: /var/cache/{{ pkg_mgr.split('/')[-1] }}
+    cache_path: /var/cache/{{ pkg_mgr_suffix }}
 
 - import_tasks: copy_rpms.yml
 
@@ -107,7 +103,7 @@
         buildah run
           --volume {{ yum_update.path }}:/tmp/yum_update.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
-          --volume /etc/yum/vars:/etc/yum/vars
+          --volume /etc/{{ pkg_mgr_suffix }}/vars:/etc/{{ pkg_mgr_suffix }}/vars
           --volume /etc/pki:/etc/pki
           {% if cache_volume is defined and cache_volume %}
           --volume {{ cache_volume }}
@@ -129,7 +125,7 @@
         buildah --debug run
           --volume {{ yum_update.path }}:/tmp/yum_update.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
-          --volume /etc/yum/vars:/etc/yum/vars
+          --volume /etc/{{ pkg_mgr_suffix }}/vars:/etc/{{ pkg_mgr_suffix }}/vars
           --volume /etc/pki:/etc/pki
           {% for repo in file_repos.stdout_lines %}
             {% if repo is exists %}
