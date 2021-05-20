@@ -38,13 +38,20 @@
     chdir: "{{ yum_repos_dir_path }}"
   register: file_repos
 
+- name: Find if /etc/{{ pkg_mgr_suffix }}/vars exists
+  stat:
+    path: /etc/{{ pkg_mgr_suffix }}/vars
+  register: pkg_mgr_vars_stat
+
 - block:
     - name: Run yum_install.sh
       command: >
         buildah run
           --volume {{ yum_install.path }}:/tmp/yum_install.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
+          {% if pkg_mgr_vars_stat.stat.exists %}
           --volume /etc/{{ pkg_mgr_suffix }}/vars:/etc/{{ pkg_mgr_suffix }}/vars
+          {% endif %}
           {% for repo in file_repos.stdout_lines %}
             {% if repo is exists %}
               --volume {{ repo }}:{{ repo }}
@@ -62,7 +69,9 @@
         buildah --debug run
           --volume {{ yum_install.path }}:/tmp/yum_install.sh
           --volume {{ yum_repos_dir_path }}:/etc/yum.repos.d
+          {% if pkg_mgr_vars_stat.stat.exists %}
           --volume /etc/{{ pkg_mgr_suffix }}/vars:/etc/{{ pkg_mgr_suffix }}/vars
+          {% endif %}
           {% for repo in file_repos.stdout_lines %}
             {% if repo is exists %}
               --volume {{ repo }}:{{ repo }}
