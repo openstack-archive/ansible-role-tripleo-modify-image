@@ -155,6 +155,25 @@
     path: "{{ yum_update.path }}"
     state: absent
 
+- name: Create the repo list
+  set_fact:
+    repo_list: "{{ update_repo.split(',') }}"
+
+- name: Capture the update repos and installed rpms
+  shell: >
+    buildah run {{ from_image }} yum list installed > /var/log/container_info.log
+  register: rpm_list
+
+- name: Extract the updated rpms
+  shell: |
+    UPDATE_LOG=/var/log/container_image_update_output.log;
+    touch $UPDATE_LOG;
+    echo "** {{ target_image | default(source_image) }}{{ modified_append_tag }} **" >> $UPDATE_LOG;
+    {% for repo in repo_list %}
+    cat /var/log/container_info.log | grep -F "@{{ repo|replace(' ', '') }}" >> $UPDATE_LOG || true;
+    {% endfor %}
+    rm -f /var/log/container_info.log
+
 # NOTE(aschultz): remove --format docker when oci images are properly supported
 - name: Commit changes to image
         ({{ target_image | default(source_image) }}{{ modified_append_tag }})
