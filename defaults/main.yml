@@ -1,6 +1,6 @@
 ---
 update_repo: ''
-container_build_tool: 'docker'
+container_build_tool: 'buildah'
 python_dir: []
 refspecs: []
 yum_packages: []

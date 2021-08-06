@@ -12,7 +12,6 @@ galaxy_info:
         - 7
 
   galaxy_tags:
-    - docker
     - buildah
     - container
     - openstack

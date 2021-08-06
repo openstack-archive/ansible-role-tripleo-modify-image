@@ -26,8 +26,8 @@ Role Variables
      - `[undefined]`
      - If set, the modified image will be tagged with `target_image + modified_append_tag`. If `target_image` is not set, the modified image will be tagged with `source_image + modified_append_tag`. If the purpose of the image is not changing, it may be enough to rely on the `source_image + modified_append_tag` tag to identify that this is a modified version of the source image.
    * - `container_build_tool`
-     - `docker`
-     - Tool used to build containers, can be 'docker' or 'buildah'
+     - `buildah`
+     - Tool used to build containers, can be only 'buildah'
 
 .. list-table:: Variables used for yum update
    :widths: auto
@@ -56,7 +56,6 @@ Role Variables
      - `None`
      - Optional path of directory to be used as `/etc/yum.repos.d` during the update
    * - `container_build_tool`
-     - `docker`
      - See modify image variables
    * - `yum_cache`
      - `None`
@@ -91,7 +90,6 @@ Role Variables
      - `None`
      - Optional path of directory to be used as `/etc/yum.repos.d` during the update
    * - `container_build_tool`
-     - `docker`
      - See modify image variables
 
 
@@ -112,7 +110,6 @@ Role Variables
      - `''`
      - See modify image variables
    * - `container_build_tool`
-     - `docker`
      - See modify image variables
    * - `refspecs`
      - `[]`
@@ -127,8 +124,6 @@ Requirements
 
  - ansible >= 2.4
  - python >= 2.6
- - docker-py >= 1.7.0
- - Docker API >= 1.20
 
 Dependencies
 ------------
@@ -156,7 +151,7 @@ The following playbook will produce a modified image with the tag
         vars:
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
           modify_dir_path: /path/to/example_modify_dir
-          container_build_tool: docker # or buildah
+          container_build_tool: buildah
 
 The directory `example_modify_dir` contains the `Dockerfile` which will perform
 the modification, for example:
@@ -197,7 +192,7 @@ In this playbook the tasks\_from is set as a variable instead of an
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
           yum_repos_dir_path: /etc/yum.repos.d
           modified_append_tag: updated
-          container_build_tool: buildah # or docker
+          container_build_tool: buildah
           yum_cache: /tmp/containers-updater/yum_cache
           rpms_path: /home/stack/rpms
 
@@ -212,7 +207,7 @@ In this playbook the tasks\_from is set as a variable instead of an
           tasks_from: yum_update.yml
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
           modified_append_tag: updated
-          container_build_tool: docker # or buildah
+          container_build_tool: buildah
           rpms_path: /home/stack/rpms/
 
 Note, if you have a locally installed gating repo, you can add
@@ -240,7 +235,7 @@ a variable instead of an `import_role` parameter.
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
           yum_repos_dir_path: /etc/yum.repos.d
           yum_packages: ['foobar-nova-plugin', 'fizzbuzz-nova-plugin']
-          container_build_tool: docker # or buildah
+          container_build_tool: buildah
 
 RPM install
 ~~~~~~~~~~~

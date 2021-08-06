@@ -55,7 +55,3 @@ sync
 {% else %}
 rm -rf /var/cache/$PKG_MGR
 {% endif %}
-
-{% if container_build_tool is defined and container_build_tool == 'docker' %}
-rm -f /tmp/yum_install.sh
-{% endif %}
