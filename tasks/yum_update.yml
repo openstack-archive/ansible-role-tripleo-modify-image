@@ -4,4 +4,3 @@
     - always
 
 - import_tasks: yum_update_buildah.yml
-  when: container_build_tool == 'buildah'

@@ -1,3 +1,0 @@
----
-build_commands:
-  buildah: buildah bud --format docker

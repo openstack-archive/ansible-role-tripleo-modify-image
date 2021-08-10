@@ -5,11 +5,6 @@
       - source_image is defined
       - source_image | length > 0
 
-- name: Ensure that container_build_tool is correctly set
-  fail: msg="{{ container_build_tool }} is not a valid value for
-             container_build_tool. Use 'buildah'."
-  when: container_build_tool != 'buildah'
-
 - name: Set default modified_append_tag
   set_fact:
     modified_append_tag: "{{ lookup('pipe','date +-modified-%Y%m%d%H%M%S') }}"
