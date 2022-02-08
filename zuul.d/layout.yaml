@@ -5,19 +5,19 @@
     check:
       jobs:
         - openstack-tox-linters
-        - tripleo-ci-centos-8-content-provider
-        - tripleo-ci-centos-8-scenario001-standalone: &scenario001
+        - tripleo-ci-centos-9-content-provider
+        - tripleo-ci-centos-9-scenario001-standalone: &scenario001
             vars:
               consumer_job: true
               tags:
                 - standalone
             dependencies:
-              - tripleo-ci-centos-8-content-provider
+              - tripleo-ci-centos-9-content-provider
     gate:
       jobs:
         - openstack-tox-linters
-        - tripleo-ci-centos-8-content-provider
-        - tripleo-ci-centos-8-scenario001-standalone: *scenario001
+        - tripleo-ci-centos-9-content-provider
+        - tripleo-ci-centos-9-scenario001-standalone: *scenario001
       queue: tripleo
     post:
       jobs:
