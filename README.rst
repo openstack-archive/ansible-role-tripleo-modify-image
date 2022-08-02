@@ -120,6 +120,36 @@ Dependencies
 
 None
 
+Warnings
+--------
+
+On-disk repositories
+....................
+
+Please ensure the SELinux label for the on-disk repositories are correct.
+Depending on your container-selinux (and podman) version, you may face issues.
+
+Some examples of a correct type:
+
+ - ```system_u:object_r:rpm_var_cache_t```
+ - ```system_u:object_r:container_file_t```
+
+First one matches the one of /var/cache/dnf, and is accessible from within a
+container, while the second one may allow a container to actually write in
+there.
+
+Directories located in the user's home
+......................................
+
+You may want to avoid pointing to directories in your $HOME when running this
+role, especially when it's running from within TripleO client (for instance
+with the ```openstack tripleo container image prepare``` command). Doing so
+may break due to the SELinux labels and permissions associated to your home
+directory.
+
+Please use another location, such as /opt, or even /tmp - and double-check the
+SELinux labels therein.
+
 Example Playbooks
 -----------------
 
@@ -182,7 +212,7 @@ In this playbook the tasks\_from is set as a variable instead of an
           yum_repos_dir_path: /etc/yum.repos.d
           modified_append_tag: updated
           yum_cache: /tmp/containers-updater/yum_cache
-          rpms_path: /home/stack/rpms
+          rpms_path: /opt/rpms
 
 .. code-block::
 
@@ -195,7 +225,7 @@ In this playbook the tasks\_from is set as a variable instead of an
           tasks_from: yum_update.yml
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
           modified_append_tag: updated
-          rpms_path: /home/stack/rpms/
+          rpms_path: /opt/rpms/
 
 Note, if you have a locally installed gating repo, you can add
 ``update_repo: gating-repo``. This may be the case for the consequent in-place
@@ -242,7 +272,7 @@ network connectivity.
         vars:
           tasks_from: rpm_install.yml
           source_image: docker.io/tripleomaster/centos-binary-nova-api:latest
-          rpms_path: /home/stack/rpms
+          rpms_path: /opt/rpms
           modified_append_tag: -hotfix
 
 Dev install
@@ -288,6 +318,9 @@ or it can be used to build an image from a local Python directory:
           modified_append_tag: -devel
           python_dir:
             - /home/joe/git/openstack/heat
+
+Note: here, we can use a directory located in the user's home because it's
+probably launched by the user.
 
 License
 -------
