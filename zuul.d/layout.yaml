@@ -2,6 +2,7 @@
 - project:
     templates:
       - tripleo-multinode-container-minimal-pipeline
+    queue: tripleo
     check:
       jobs:
         - openstack-tox-linters
@@ -18,7 +19,6 @@
         - openstack-tox-linters
         - tripleo-ci-centos-9-content-provider
         - tripleo-ci-centos-9-scenario001-standalone: *scenario001
-      queue: tripleo
     post:
       jobs:
         - publish-openstack-python-branch-tarball
